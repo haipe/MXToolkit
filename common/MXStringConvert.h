@@ -3,10 +3,19 @@
 #include <iostream>
 #include <string>
 #include <windows.h>
+#include "MXCommon.h"
 using namespace std;
 
 namespace mxtoolkit
 {
+    class SCKit
+    {
+    public:
+        static WString& Utf8ToUnicode(const CHAR* utf8,WString& unicode);
+        static WString& AnsiiToUnicode(const CHAR* ansii,WString& unicode);
+        static AString& UnicodeToUtf8(const WCHAR* unicode, AString& utf8);
+        static AString& UnicodeToAnsi(const WCHAR* unicode, AString& ansii);
+    };
 
     class StringConvert
     {
@@ -22,6 +31,8 @@ namespace mxtoolkit
         static bool AToW(wstring &pOut, const char *pText, int pLen);
         static bool WToA(string &pOut, const wchar_t *pText, int pLen);
 
+
+    private:
         static void Gb2312ToUnicode(WCHAR* pOut, char *gbBuffer);
         static void UTF_8ToUnicode(WCHAR* pOut, char *pText);
         static void UnicodeToUTF_8(char* pOut, WCHAR* pText);
