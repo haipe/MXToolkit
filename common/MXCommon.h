@@ -4,9 +4,17 @@
 #include <tchar.h>
 #include <string>
 
+#ifndef WIN32
+#include <sys/types.h>
+#else
+#pragma warning(disable:4996)
+#endif
+
+
+
 
 /////////////////////////////////位操作
-#ifndef _WIN32
+#ifndef WIN32
 
 #define DWORD_PTR DWORD
 
@@ -31,7 +39,7 @@
 ////////////////////////////////文件系统相关
 
 
-#ifdef _WIN32
+#ifdef WIN32
 #define _MX_DIR_CHAR_A		'\\'
 #define _MX_DIR_CHAR_W		L'\\'
 
@@ -49,6 +57,21 @@
 
 namespace mxtoolkit
 {
+    typedef char				int8;
+    typedef unsigned char		uint8;
+    typedef short				int16;
+    typedef unsigned short		uint16;
+    typedef int					int32;
+    typedef unsigned int		uint32;
+#ifdef WIN32
+    typedef __int64				int64;
+    typedef unsigned __int64	uint64;
+#else
+#include <sys/types.h>
+    typedef int64_t				int64;
+    typedef u_int64_t			uint64;
+#endif
+
     typedef std::wstring WString;
     typedef std::string AString;
 
