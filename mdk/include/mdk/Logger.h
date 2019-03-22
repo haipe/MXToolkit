@@ -1,4 +1,4 @@
-// Logger.h: interface for the Logger class.
+ï»¿// Logger.h: interface for the Logger class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -16,43 +16,43 @@ class Logger
 {
 public:
 	Logger();
-	Logger(const char *name);
+	Logger(const char *name, const char* dir);
 	virtual ~Logger();
 
 public:
-	//ÉèÖÃÈÕÖ¾Ãû£¬ÈÕÖ¾½«±»±£´æµ½"log/Ãû×Ö/"ÏÂÄ¿Â¼ÏÂ
-	//Ö»ÄÜÉèÖÃ1´Î,ÒÔºó¶¼½«Ê§°Ü
-	//Èç¹û¹¹Ôìº¯ÊıÒÑ¾­´«µİÁËÈÕÖ¾Ãû,Ôò´Ë·½·¨²»ÄÜÔÙÉèÖÃ
+	//è®¾ç½®æ—¥å¿—åï¼Œæ—¥å¿—å°†è¢«ä¿å­˜åˆ°"log/åå­—/"ä¸‹ç›®å½•ä¸‹
+	//åªèƒ½è®¾ç½®1æ¬¡,ä»¥åéƒ½å°†å¤±è´¥
+	//å¦‚æœæ„é€ å‡½æ•°å·²ç»ä¼ é€’äº†æ—¥å¿—å,åˆ™æ­¤æ–¹æ³•ä¸èƒ½å†è®¾ç½®
 	bool SetLogName( const char *name );
-	void SetPrintLog( bool bPrint );//Ğ´ÈÕÖ¾Ê±£¬ÊÇ·ñÍ¬Ê±´òÓ¡µ½¿ØÖÆÌ¨
-	bool Info( const char *findKey, const char *format, ... );//Êä³öĞÅÏ¢£¬Êä³ö¸ñÊ½Îª Ê±¼ä+¿Õ¸ñ+(findKey)+¿Õ¸ñ+(Tid:Ïß³ÌID)+¿Õ¸ñ+²ÎÊı´«ÈëĞÅÏ¢
-	bool StreamInfo( const char *findKey, unsigned char *stream, int nLen, const char *format, ...  );//Êä³ö´øÊı¾İÁ÷µÄÈÕÖÁĞÅÏ¢, streamÊı¾İ½«½ÓÔÚformatĞÅÏ¢Ö®ºóÊä³ö£¬ÒÔstream:Îª±ê¼Ç
-	void SetMaxLogSize( int maxLogSize );//ÉèÖÃµ¥¸öÈÕÖ¾ÎÄ¼ş×î´ó³ß´ç£¬µ¥Î»M
-	void SetMaxExistDay( int maxExistDay );//ÉèÖÃÈÕÖ¾ÎÄ¼ş×î´ó±£ÁôÌìÊı£¬±ÈÈçÉèÖÃÎª30Ôò£¬×î¶à±£´æ×î½ü30ÌìµÄÈÕÖ¾
-	//É¾³ınDayÌìÇ°µÄÈÕÖ¾
+	void SetPrintLog( bool bPrint );//å†™æ—¥å¿—æ—¶ï¼Œæ˜¯å¦åŒæ—¶æ‰“å°åˆ°æ§åˆ¶å°
+	bool Info( const char *findKey, const char *format, ... );//è¾“å‡ºä¿¡æ¯ï¼Œè¾“å‡ºæ ¼å¼ä¸º æ—¶é—´+ç©ºæ ¼+(findKey)+ç©ºæ ¼+(Tid:çº¿ç¨‹ID)+ç©ºæ ¼+å‚æ•°ä¼ å…¥ä¿¡æ¯
+	bool StreamInfo( const char *findKey, unsigned char *stream, int nLen, const char *format, ...  );//è¾“å‡ºå¸¦æ•°æ®æµçš„æ—¥è‡³ä¿¡æ¯, streamæ•°æ®å°†æ¥åœ¨formatä¿¡æ¯ä¹‹åè¾“å‡ºï¼Œä»¥stream:ä¸ºæ ‡è®°
+	void SetMaxLogSize( int maxLogSize );//è®¾ç½®å•ä¸ªæ—¥å¿—æ–‡ä»¶æœ€å¤§å°ºå¯¸ï¼Œå•ä½M
+	void SetMaxExistDay( int maxExistDay );//è®¾ç½®æ—¥å¿—æ–‡ä»¶æœ€å¤§ä¿ç•™å¤©æ•°ï¼Œæ¯”å¦‚è®¾ç½®ä¸º30åˆ™ï¼Œæœ€å¤šä¿å­˜æœ€è¿‘30å¤©çš„æ—¥å¿—
+	//åˆ é™¤nDayå¤©å‰çš„æ—¥å¿—
 	void DelLog( int nDay );
 private:
 	bool OpenRunLog();
-	bool CreateLogDir();//×ö³õÊ¼»¯,Ö»ÄÜµ÷ÓÃ1´Î
-	bool CreateFreeDir(const char* dir);//´´½¨×ÔÓÉ£¨×î´óÈ¨ÏŞ£©Ä¿Â¼
-	void RenameMaxLog();//ÖØÃû³¬´óÈÕÖ¾
+	bool CreateLogDir();//åšåˆå§‹åŒ–,åªèƒ½è°ƒç”¨1æ¬¡
+	bool CreateFreeDir(const char* dir);//åˆ›å»ºè‡ªç”±ï¼ˆæœ€å¤§æƒé™ï¼‰ç›®å½•
+	void RenameMaxLog();//é‡åè¶…å¤§æ—¥å¿—
 	void FindDelLog(char * lpPath, int maxExistDay);
 
 private:
-	bool m_isInit;//ÊÇ·ñ³õÊ¼»¯
-	bool m_bPrint;//Êä³öÈÕÖ¾Ê±,ÊÇ·ñÍ¬Ê±´òÓ¡µ½¿ØÖÆÌ¨
+	bool m_isInit;//æ˜¯å¦åˆå§‹åŒ–
+	bool m_bPrint;//è¾“å‡ºæ—¥å¿—æ—¶,æ˜¯å¦åŒæ—¶æ‰“å°åˆ°æ§åˆ¶å°
 	Mutex m_writeMutex;
-	bool m_bRLogOpened;//ÔËĞĞÈÕÖ¾ÎÄ¼şÊÇ·ñ´ò¿ª
-	//ÔËĞĞÈÕÖ¾µ±Ç°ÈÕÆÚ
+	bool m_bRLogOpened;//è¿è¡Œæ—¥å¿—æ–‡ä»¶æ˜¯å¦æ‰“å¼€
+	//è¿è¡Œæ—¥å¿—å½“å‰æ—¥æœŸ
 	short m_nRunLogCurYear;
 	unsigned char m_nRunLogCurMonth;
 	unsigned char m_nRunLogCurDay;
-	FILE *m_fpRunLog;//ÈÕÖ¾ÎÄ¼şÖ¸Õë
-	std::string m_name;//ÈÕÖ¾Ãû
-	std::string m_runLogDir;//ÈÕÖ¾Ä¿Â¼
-	int m_maxLogSize;//ÈÕÖ¾ÎÄ¼ş×î´ó³ß´ç
+	FILE *m_fpRunLog;//æ—¥å¿—æ–‡ä»¶æŒ‡é’ˆ
+	std::string m_name;//æ—¥å¿—å
+	std::string m_runLogDir;//æ—¥å¿—ç›®å½•
+	int m_maxLogSize;//æ—¥å¿—æ–‡ä»¶æœ€å¤§å°ºå¯¸
 	int m_maxExistDay;
-	int m_index;//ÈÕÖ¾±àºÅ
+	int m_index;//æ—¥å¿—ç¼–å·
 	char *m_exeDir;
 };
 

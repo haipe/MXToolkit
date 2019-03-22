@@ -1,4 +1,4 @@
-// Logger.cpp: implementation of the Logger class.
+ï»¿// Logger.cpp: implementation of the Logger class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -39,7 +39,7 @@ Logger::Logger()
 	GetExeDir(m_exeDir, 2048);
 }
 
-Logger::Logger(const char *name)
+Logger::Logger(const char *name, const char* dir)
 {
 	m_isInit = false;
 	m_index = 0;
@@ -280,12 +280,12 @@ bool Logger::Info( const char *findKey, const char *format, ... )
 	RenameMaxLog();
 
 	if ( !OpenRunLog() ) return false;
-	//È¡µÃÊ±¼ä
+	//å–å¾—æ—¶é—´
 	time_t cutTime = time(NULL);
 	tm *pCurTM = localtime(&cutTime);
 	char strTime[32];
 	strftime( strTime, 30, "%Y-%m-%d %H:%M:%S", pCurTM );
-	//Ğ´ÈëÈÕÖ¾ÄÚÈİ
+	//å†™å…¥æ—¥å¿—å†…å®¹
 	fprintf( m_fpRunLog, "%s Tid:%llu [%s] ", strTime, CurThreadId(), findKey );
 	va_list ap;
 	va_start( ap, format );
@@ -298,7 +298,7 @@ bool Logger::Info( const char *findKey, const char *format, ... )
 #endif
 	fflush(m_fpRunLog);
 
-	//´òÓ¡ÈÕÖ¾ÄÚÈİ
+	//æ‰“å°æ—¥å¿—å†…å®¹
 	if ( m_bPrint ) 
 	{
 		printf( "%s Tid:%llu [%s] ", strTime, CurThreadId(), findKey );
@@ -324,19 +324,19 @@ bool Logger::StreamInfo( const char *findKey, unsigned char *stream, int nLen, c
 	RenameMaxLog();
 
 	if ( !OpenRunLog() ) return false;
-	//È¡µÃÊ±¼ä
+	//å–å¾—æ—¶é—´
 	time_t cutTime = time(NULL);
 	tm *pCurTM = localtime(&cutTime);
 	char strTime[32];
 	strftime( strTime, 30, "%Y-%m-%d %H:%M:%S", pCurTM );
-	//Ğ´ÈëÈÕÖ¾ÄÚÈİ
+	//å†™å…¥æ—¥å¿—å†…å®¹
 	fprintf( m_fpRunLog, "%s Tid:%llu [%s] ", strTime, CurThreadId(), findKey );
 	va_list ap;
 	va_start( ap, format );
 	vfprintf( m_fpRunLog, format, ap );
 	va_end( ap );
 
-	//´òÓ¡ÈÕÖ¾ÄÚÈİ
+	//æ‰“å°æ—¥å¿—å†…å®¹
 	if ( m_bPrint ) 
 	{
 		printf( "%s Tid:%llu [%s] ", strTime, CurThreadId(), findKey );
@@ -346,7 +346,7 @@ bool Logger::StreamInfo( const char *findKey, unsigned char *stream, int nLen, c
 		va_end( ap );
 	}
 
-	//Ğ´ÈëÁ÷
+	//å†™å…¥æµ
 	fprintf( m_fpRunLog, " stream:" );
 	if ( m_bPrint ) printf( " stream:" );
 	int i = 0;
