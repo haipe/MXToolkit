@@ -25,6 +25,7 @@ foo.txt
 *.bsc
 *.sbr
 *.tlog
+*.idb
 .tlog/
 .vscode/
 vld.txt
