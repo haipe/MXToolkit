@@ -16,33 +16,6 @@ namespace mxtoolkit
     	
 	int ReplaceAll( AString* in, const AString& pattern, const AString& newpat );
 
-	template<typename T = AString,typename Tout = std::vector<T>>
-	unsigned int SplitString( const T& in, const T& sp, Tout* out )
-	{
-		if ( in.empty() || out == nullptr )return 0;
-
-		out->clear();
-		size_t bpos = 0;
-		size_t pos = in.find( sp );
-
-		T x = in.substr( bpos, pos );
-		out->push_back( x );
-		if ( pos == T::npos )return out->size();
-
-		while ( true )
-		{
-			bpos = pos + 1;
-			pos = in.find( sp, bpos );
-
-			x = in.substr( bpos, pos - bpos );
-			out->push_back( x );
-
-			if ( pos == T::npos )
-				break;
-		}
-
-		return out->size();
-	}
 
 #ifdef UNICODE
 #define NewGuidString NewGuidStringW
