@@ -38,6 +38,9 @@ src/Lib/
 src/Temp/
 src/ipch/
 .vs/
-
+*.Debug
+*.Release
+gumbo/qt/Makefile
+*.stash
 
  
