@@ -247,11 +247,15 @@ namespace mxtoolkit
 
     LRESULT MXDuiWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        //if (m_xmlFile == _T("MainToast.xml"))
-        //CHAR ss[MAX_PATH]; 
-        //sprintf(ss, "wnd:%d,[msg:%x, w:%d, l:%d]-----------------------.\n", m_hWnd, uMsg, wParam, lParam);
-        //OutputDebugStringA(ss);
-        
+#ifdef _DEBUG
+        if (m_xmlFile == _T("FLTaskBarIcon.xml"))
+        {
+            CHAR ss[MAX_PATH];
+            sprintf(ss, "wnd:%d,[msg:%x, w:%d, l:%d]-----------------------.\n", m_hWnd, uMsg, wParam, lParam);
+            OutputDebugStringA(ss);
+        }
+#endif
+
         LRESULT lRes = 0;
         BOOL bHandled = TRUE;
         switch (uMsg)
