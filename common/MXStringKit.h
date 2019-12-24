@@ -35,11 +35,14 @@ namespace mxtoolkit
         return out->size();
     }
 
-    template<typename ConvertFrom, typename ConvertTo>
-    ConvertTo& AWConvert(const typename ConvertFrom* from, typename ConvertTo* to)
+    template<
+        typename ConvertFrom,
+        typename ConvertTo,
+        typename BaseFromType = ConvertFrom::allocator_type::value_type,
+        typename BaseToType = ConvertTo::allocator_type::value_type>
+    ConvertTo& AWConvert(const typename BaseFromType* from, typename ConvertTo* to)
     {
-        using BaseToType = typename ConvertTo::allocator_type::value_type;
-        if (std::is_same<ConvertFrom, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
+        if (std::is_same<BaseFromType, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
         {
             //W to A
             // 预算-缓冲区中多字节的长度      
@@ -53,7 +56,7 @@ namespace mxtoolkit
             to->append((const BaseToType*)pAssii);
             free(pAssii);
         }
-        else if (std::is_same<ConvertFrom, char>::value && std::is_same<ConvertTo, std::wstring>::value)
+        else if (std::is_same<BaseToType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
         {
             //A to W
             // 预算-缓冲区中宽字节的长度      
@@ -72,11 +75,14 @@ namespace mxtoolkit
     }
 
 
-    template<typename ConvertFrom, typename ConvertTo>
-    ConvertTo& WUtf8Convert(const typename ConvertFrom* from, typename ConvertTo* to)
+    template<
+        typename ConvertFrom, 
+        typename ConvertTo, 
+        typename BaseFromType = ConvertFrom::allocator_type::value_type,
+        typename BaseToType = ConvertTo::allocator_type::value_type>
+    ConvertTo& WUtf8Convert(const typename BaseFromType* from, typename ConvertTo* to)
     {
-        using BaseToType = typename ConvertTo::allocator_type::value_type;
-        if (std::is_same<ConvertFrom, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
+        if (std::is_same<BaseFromType, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
         {
             //W to utf8
             // 预算-缓冲区中多字节的长度      
@@ -89,15 +95,15 @@ namespace mxtoolkit
             to->append((const BaseToType*)pUtf8);
             free(pUtf8);
         }
-        else if (std::is_same<ConvertFrom, char>::value && std::is_same<ConvertTo, std::wstring>::value)
+        else if (std::is_same<BaseToType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
         {
             //utf8 to W
             // 预算-缓冲区中宽字节的长度      
-            int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, (LPCWSTR)from, -1, nullptr, 0);
+            int unicodeLen = MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)from, -1, nullptr, 0);
             // 给指向缓冲区的指针变量分配内存      
             wchar_t *pUnicode = (wchar_t*)malloc(sizeof(wchar_t)*unicodeLen);
             // 开始向缓冲区转换字节      
-            MultiByteToWideChar(CP_UTF8, 0, (LPCWSTR)from, -1, pUnicode, unicodeLen);
+            MultiByteToWideChar(CP_UTF8, 0, (LPCSTR)from, -1, pUnicode, unicodeLen);
             
             to->clear();
             to->append((const BaseToType*)pUnicode);
