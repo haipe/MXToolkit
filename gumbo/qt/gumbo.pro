@@ -38,6 +38,7 @@ HEADERS += \
     ../src/parser.h \
     ../src/string_buffer.h \
     ../src/string_piece.h \
+    ../src/strings_util.h \
     ../src/tag_enum.h \
     ../src/tag_gperf.h \
     ../src/tag_sizes.h \
