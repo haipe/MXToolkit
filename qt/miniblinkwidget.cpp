@@ -1,4 +1,6 @@
 ﻿#include "miniblinkwidget.h"
+#include <QMetaMethod>
+
 
 void MessageBoxA(HWND,const char* msg, const char* func, int)
 {
@@ -21,18 +23,12 @@ MiniBlinkWidget::MiniBlinkWidget(QWidget *parent, const QString& url)
     {
         wkeOnDocumentReady(webView, MiniBlinkWidget::MiniBlinkWidget::HandleDocumentReady, this);
         wkeOnTitleChanged(webView, MiniBlinkWidget::HandleTitleChanged, this);
+        wkeOnURLChanged(webView,MiniBlinkWidget::HandleUrlChanged,this);
         wkeOnCreateView(webView, MiniBlinkWidget::HandleCreateView, this);
         wkeOnLoadUrlBegin(webView, MiniBlinkWidget::HandleLoadUrlBegin, this);
         wkeOnLoadUrlEnd(webView, MiniBlinkWidget::HandleLoadUrlEnd, this);
 
         web_view = webView;
-
-        //wkeMoveToCenter(webView);
-
-        //QString path = "file:///" + QCoreApplication::applicationDirPath() + "/docs/index.html";
-        //wkeLoadURL(webView, path.toLocal8Bit());
-        //wkeLoadURL(webView, "https://danjuanapp.com/djapi/plan/CSI666/trade_history?size=20&page=1");
-        //wkeLoadURL(webView, "https://danjuanapp.com/strategy/CSI666?channel=1100106186&source=rqzh");
 
         wkeSetCookieEnabled(webView,true);
 
@@ -74,6 +70,16 @@ void MiniBlinkWidget::loadUrl(const QString &url)
     wkeLoadURL(web_view,request_url.toStdString().c_str());
 }
 
+void MiniBlinkWidget::addHookRequest(const QString &url)
+{
+    hook_request.insert(url);
+}
+
+void MiniBlinkWidget::removeHookRequest(const QString &url)
+{
+    hook_request.remove(url);
+}
+
 void MiniBlinkWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
@@ -109,26 +115,29 @@ void MiniBlinkWidget::HandleTitleChanged(wkeWebView webWindow, void* param, cons
     miniWidget->onTitleChanged("");
 }
 
-// 回调：创建新的页面，比如说调用了 window.open 或者点击了 <a target="_blank" .../>
-wkeWebView MiniBlinkWidget::HandleCreateView(wkeWebView, void* param, wkeNavigationType navType, const wkeString url, const wkeWindowFeatures* features)
+void MiniBlinkWidget::HandleUrlChanged(wkeWebView webView, void* param, const wkeString url)
 {
-    //qDebug() << "HandleCreateView:" << wkeGetString(url);
-    //wkeWebView newWindow = wkeCreateWebWindow(WKE_WINDOW_TYPE_POPUP, NULL, features->x, features->y, features->width, features->height);
-    //wkeShowWindow(newWindow, true);
+    qDebug() << "url change:" << wkeGetString(url);
+
+    MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
+    miniWidget->onUrlChanged(wkeGetString(url));
+}
+// 回调：创建新的页面，比如说调用了 window.open 或者点击了 <a target="_blank" .../>
+wkeWebView MiniBlinkWidget::HandleCreateView(
+        wkeWebView, void* param, wkeNavigationType navType, const wkeString url, const wkeWindowFeatures* features)
+{
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
     return miniWidget->onCreateView(navType,QString(wkeGetString(url)),features);
 }
 
 bool MiniBlinkWidget::HandleLoadUrlBegin(wkeWebView, void* param, const char *url, void *job)
 {
-    //qDebug() << "HandleLoadUrlBegin:" << url;
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
     return miniWidget->onLoadUrlBegin(QString(url),job);
 }
 
 void MiniBlinkWidget::HandleLoadUrlEnd(wkeWebView, void* param, const char *url, void *job, void* buf, int len)
 {
-    //qDebug() << "HandleLoadUrlEnd:" << url << " buff :"<< (const char*)buf;
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
     miniWidget->onLoadUrlEnd(QString(url),job,buf,len);
 }
@@ -140,28 +149,52 @@ void MiniBlinkWidget::onDocumentReady()
 
 void MiniBlinkWidget::onTitleChanged(const QString &title)
 {
+    setWindowTitle(title);
+}
 
+void MiniBlinkWidget::onUrlChanged(const QString &url)
+{
+    request_url = url;
 }
 
 wkeWebView MiniBlinkWidget::onCreateView(wkeNavigationType navType, const QString& url, const wkeWindowFeatures *features)
 {
-    loadUrl(url);
-    return web_view;
-    //return nullptr;
+    QMetaMethod met = QMetaMethod::fromSignal(&MiniBlinkWidget::onCreateWebView);
+    MiniBlinkWidget* widget = nullptr;
+    if(met.isValid())
+    {
+        met.invoke( this,
+                    Q_RETURN_ARG(MiniBlinkWidget*, widget),
+                    Q_ARG(wkeNavigationType,navType),
+                    Q_ARG(const QString&,url),
+                    Q_ARG(const wkeWindowFeatures*, features));
+    }
+
+    //loadUrl(url);
+    return widget ? widget->web_view : this->web_view;
 }
 
 bool MiniBlinkWidget::onLoadUrlBegin(const QString& url, void *job)
 {
-//    if (url.indexOf("https://kyfw.12306.cn/otn/leftTicket/queryZ?") != -1)
-//    {
-//        wkeNetHookRequest(job);
-//    }
+    for(auto hookUrl : hook_request)
+    {
+        if (url.indexOf(hookUrl) != -1)
+        {
+            wkeNetHookRequest(job);
+            hook_jobs[(unsigned int)job] = hookUrl;
+            break;
+        }
+    }
 
     return true;
 }
 
 void MiniBlinkWidget::onLoadUrlEnd(const QString& url, void *job, void *buf, int len)
 {
+    QString hookUrl = hook_jobs[(unsigned int)job];
+    if(hookUrl.isEmpty())
+        return;
 
+    emit onHookRequest(hookUrl,url,QString((const char*)buf));
 }
 }
