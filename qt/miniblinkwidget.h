@@ -21,6 +21,8 @@ public:
 
     virtual void loadUrl(const QString& url);
 signals:
+    //自定义信号
+    void onLoadUrlCompleted();
 
 public slots:
 

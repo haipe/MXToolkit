@@ -135,7 +135,7 @@ void MiniBlinkWidget::HandleLoadUrlEnd(wkeWebView, void* param, const char *url,
 
 void MiniBlinkWidget::onDocumentReady()
 {
-
+    emit onLoadUrlCompleted();
 }
 
 void MiniBlinkWidget::onTitleChanged(const QString &title)
