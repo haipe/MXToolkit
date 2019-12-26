@@ -60,6 +60,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+    //MessageBoxW(NULL, lpCmdLine, lpCmdLine, MB_OK);
+
     DWORD startTick = GetCurrentTime();
 
     // TODO: 在此处放置代码。    
@@ -85,7 +87,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     bool bDebug = false;
 
     std::vector<std::string> cmds;
-    mxtoolkit::SplitString<std::string>(cmdUrl, " ", &cmds);
+    if (mxtoolkit::SplitString<std::string>(cmdUrl, " ", &cmds) <= 0)
+        return 0;
+
     for (auto item : cmds)
     {
         bDebug = (item == "debug");
@@ -93,6 +97,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             break;
     }
 
+    cmdUrl = cmds[0];
 #endif
 
     if(bDebug)
@@ -120,6 +125,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         printf("%s\n",useTime.c_str());
         MessageBoxA(NULL, useTime.c_str(), "MXFileManager", MB_OK);
+    }
+    else
+    {
+        DeleteFileA(info.download_file.c_str());
     }
     
     return (int) 0;
@@ -166,6 +175,9 @@ int DownloadFile(OperateFileInfo& info)
 
     info.download_file = filePath;
     info.download_stream = nullptr;
+
+    printf("download url:%s.\n", info.download_url.c_str());
+    printf("download file:%s.\n", info.download_file.c_str());
 
     curl_global_init(CURL_GLOBAL_ALL);
     /* get a curl handle */
