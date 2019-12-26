@@ -21,22 +21,25 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\crypt.h">
+    <ClInclude Include="..\minizip\crypt.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\ioapi.h">
+    <ClInclude Include="..\minizip\ioapi.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\iowin32.h">
+    <ClInclude Include="..\minizip\iowin32.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\mztools.h">
+    <ClInclude Include="..\minizip\mztools.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\unzip.h">
+    <ClInclude Include="..\minizip\unzip.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="minizip\zip.h">
+    <ClInclude Include="..\minizip\zip.h">
+      <Filter>minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\minizip\OperateZip.h">
       <Filter>minizip</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,20 +50,28 @@
     <ClCompile Include="MXCompressTools.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="minizip\ioapi.c">
+    <ClCompile Include="..\minizip\ioapi.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="minizip\iowin32.c">
+    <ClCompile Include="..\minizip\iowin32.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="minizip\mztools.c">
+    <ClCompile Include="..\minizip\mztools.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="minizip\unzip.c">
+    <ClCompile Include="..\minizip\unzip.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="minizip\zip.c">
+    <ClCompile Include="..\minizip\zip.c">
       <Filter>minizip</Filter>
     </ClCompile>
+    <ClCompile Include="..\minizip\OperateZip.cpp">
+      <Filter>minizip</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\minizip\Makefile">
+      <Filter>minizip</Filter>
+    </None>
   </ItemGroup>
 </Project>
