@@ -20,9 +20,15 @@ namespace mxtoolkit
         out->push_back(x);
         if (pos == T::npos)return out->size();
 
+        unsigned int sp_len = sp.length();
+        unsigned int in_len = in.length();
+
         while (true)
         {
-            bpos = pos + 1;
+            bpos = pos + sp_len;
+            if (bpos >= in_len)
+                break;
+
             pos = in.find(sp, bpos);
 
             x = in.substr(bpos, pos - bpos);

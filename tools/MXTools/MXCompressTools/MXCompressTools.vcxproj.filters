@@ -42,6 +42,9 @@
     <ClInclude Include="..\minizip\OperateZip.h">
       <Filter>minizip</Filter>
     </ClInclude>
+    <ClInclude Include="AnonymousPip.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -67,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="..\minizip\OperateZip.cpp">
       <Filter>minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="AnonymousPip.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

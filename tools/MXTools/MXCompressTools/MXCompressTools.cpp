@@ -11,9 +11,15 @@
 #include <string>
 #include <vector>
 
+#include "libxml/tree.h"
 
 #include "MXStringKit.h"
 #include "OperateZip.h"
+
+#include "AnonymousPip.h"
+
+#pragma comment(lib,"zlib.lib")
+#pragma comment(lib,"libxml.lib")
 
 #define COMPRESS_DIR_NAME "_mx_compress_dir_"
 
@@ -119,6 +125,71 @@ BOOL GetRootFiles(std::string findPath, std::vector<std::string>& rootFile)
     return 0;
 }
 
+std::string GetMD5(const std::string& file)
+{
+doAgain:
+    std::string cmd = "certutil -hashfile ";
+    cmd += file;
+    cmd += " MD5";
+
+    std::string res;
+    AnonymousPip::CreateCmd(cmd, [&res](const std::string & result) {
+        res += result;
+    });
+
+    std::vector<std::string> resSplit;
+    mxtoolkit::SplitString<std::string>(res, "\r\n", &resSplit);
+
+    if (resSplit.size() >= 2 && resSplit[1].length() == 32)
+    {
+        printf("file MD5:%s.\n", resSplit[1].c_str());
+        return resSplit[1];
+    }
+
+    printf("Get MD5 Again.\n");
+    goto doAgain;
+    return "";
+}
+
+void MakeFileInfo(const std::string& path)
+{
+    //定义文档和节点指针
+    xmlDocPtr doc = xmlNewDoc(BAD_CAST"1.0");
+
+    xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST"root");
+    //设置根节点
+    xmlDocSetRootElement(doc, root_node);
+
+    //在根节点中直接创建节点
+    xmlNewTextChild(root_node, NULL, BAD_CAST "Version", BAD_CAST "时间戳");
+
+    std::vector<std::string> output;
+    GetRootFiles(path, output);
+
+    for (auto item : output)
+    {
+        //创建一个节点，设置其内容和属性，然后加入根结点
+        xmlNodePtr fileNode = xmlNewNode(NULL, BAD_CAST"File");
+        xmlNewProp(fileNode, BAD_CAST"val", BAD_CAST "文件名");
+        xmlNewProp(fileNode, BAD_CAST"compress", BAD_CAST "true");
+        xmlNewProp(fileNode, BAD_CAST"version", BAD_CAST "true");
+
+        xmlNewTextChild(fileNode, NULL, BAD_CAST "MD5", BAD_CAST "time");
+
+        xmlAddChild(root_node, fileNode);
+    }
+
+    //存储xml文档
+    int nRel = xmlSaveFile(std::string(path + "\\xml.xml").c_str(), doc);
+    if (nRel != -1)
+    {
+        std::cout << "一个xml文档被创建,写入" << nRel << "个字节" << std::endl;
+    }
+
+    //释放文档内节点动态申请的内存
+    xmlFreeDoc(doc);
+}
+
 int main(int argc, char* argv[])
 {
     std::cout << "Hello World!\n";
@@ -169,13 +240,44 @@ int main(int argc, char* argv[])
 
         CreateDirectoryA(destDir.c_str(), NULL);
 
+        //定义文档和节点指针
+        xmlDocPtr doc = xmlNewDoc(BAD_CAST"1.0");
+
+        xmlNodePtr root_node = xmlNewNode(NULL, BAD_CAST"root");
+        //设置根节点
+        xmlDocSetRootElement(doc, root_node);
+
+        //在根节点中直接创建节点        
+        xmlNewTextChild(root_node, NULL, BAD_CAST "Version", BAD_CAST "2019-12-27 18:00:00");
+
+        //压缩 && 写入xml
         for (auto path : output)
         {
             std::string outName = path.substr(path.find_last_of("\\") + 1);
             std::string outPath = destDir + outName;
-            
             OperateZip::Zip(path, outPath);
+                        
+            //创建一个节点，设置其内容和属性，然后加入根结点
+            xmlNodePtr fileNode = xmlNewNode(NULL, BAD_CAST"File");
+            xmlNewProp(fileNode, BAD_CAST"val", BAD_CAST outName.c_str());
+            xmlNewProp(fileNode, BAD_CAST"compress", BAD_CAST "true");
+            xmlNewProp(fileNode, BAD_CAST"version", BAD_CAST "2019-12-27 18:00:00");
+
+            std::string md5 = GetMD5(outPath);
+            xmlNewTextChild(fileNode, NULL, BAD_CAST "MD5", BAD_CAST md5.c_str());
+
+            xmlAddChild(root_node, fileNode);
         }
+
+        //存储xml文档
+        int nRel = xmlSaveFile(std::string(destDir + "xml.xml").c_str(), doc);
+        if (nRel != -1)
+        {
+            std::cout << "一个xml文档被创建,写入" << nRel << "个字节" << std::endl;
+        }
+
+        //释放文档内节点动态申请的内存
+        xmlFreeDoc(doc);
     }
     return 0;
 }

@@ -90,13 +90,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\MXToolkit\common\;$(SolutionDir)..\..\..\miniblink49\third_party\zlib\;$(SolutionDir)\minizip\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\MXToolkit\common\;$(SolutionDir)..\..\..\miniblink49\third_party\libxml\win32\include\;$(SolutionDir)..\..\..\miniblink49\third_party\libxml\src\include\;$(SolutionDir)..\..\..\miniblink49\third_party\zlib\;$(SolutionDir)\minizip\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\miniblink49\out\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\miniblink49\out\release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,15 +124,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\MXToolkit\common\;$(SolutionDir)..\..\..\miniblink49\third_party\zlib\;$(SolutionDir)\minizip\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\..\MXToolkit\common\;$(SolutionDir)..\..\..\miniblink49\third_party\libxml\win32\include\;$(SolutionDir)..\..\..\miniblink49\third_party\libxml\src\include\;$(SolutionDir)..\..\..\miniblink49\third_party\zlib\;$(SolutionDir)\minizip\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\miniblink49\out\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\..\miniblink49\out\release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,6 +162,7 @@
     <ClInclude Include="..\minizip\OperateZip.h" />
     <ClInclude Include="..\minizip\unzip.h" />
     <ClInclude Include="..\minizip\zip.h" />
+    <ClInclude Include="AnonymousPip.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,7 @@
     <ClCompile Include="..\minizip\OperateZip.cpp" />
     <ClCompile Include="..\minizip\unzip.c" />
     <ClCompile Include="..\minizip\zip.c" />
+    <ClCompile Include="AnonymousPip.cpp" />
     <ClCompile Include="MXCompressTools.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
