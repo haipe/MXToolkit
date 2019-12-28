@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf - 8"?>
+<Window size="400,160" mininfo="400,160" maxinfo="400,160" caption="0,0,0,30">
+    <VerticalLayout width="400" bordercolor="#ff000000" bordersize="1" inset="1,1,1,1">
+        <HorizontalLayout height="30" bkcolor="#ff252525"><!--标题栏-->
+            <Label name="Dialog_Title_Area_Logo_Name" text="MXStartup" pos="0,0,250,20" padding="5,5" textcolor="#ffffffff" align="left" />
+            <Control />
+            <Button name="Dialog_Title_Area_Close" width="60" height="30" text="关闭" align="center" textcolor="#ffffffff"/>
+        </HorizontalLayout>
+        <VerticalLayout bkcolor="#ffffffff" inset="5,60,5,10">
+            <Label name="Dialog_Body_Area_Progress" text="Startup..." height="30" textcolor="#ff252525" align="center" />
+            <Label height="30" width="100" text="60%" textcolor="#fffffff" bkcolor="#ff252525" align="center"/>
+        </VerticalLayout>
+    </VerticalLayout>
+</Window>
