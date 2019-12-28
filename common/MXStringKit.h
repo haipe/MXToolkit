@@ -46,7 +46,7 @@ namespace mxtoolkit
         typename ConvertTo,
         typename BaseFromType = ConvertFrom::allocator_type::value_type,
         typename BaseToType = ConvertTo::allocator_type::value_type>
-    ConvertTo& AWConvert(const typename BaseFromType* from, typename ConvertTo* to)
+    ConvertTo& WAConvert(const typename BaseFromType* from, typename ConvertTo* to)
     {
         if (std::is_same<BaseFromType, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
         {
@@ -62,7 +62,7 @@ namespace mxtoolkit
             to->append((const BaseToType*)pAssii);
             free(pAssii);
         }
-        else if (std::is_same<BaseToType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
+        else if (std::is_same<BaseFromType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
         {
             //A to W
             // 预算-缓冲区中宽字节的长度      
@@ -101,7 +101,7 @@ namespace mxtoolkit
             to->append((const BaseToType*)pUtf8);
             free(pUtf8);
         }
-        else if (std::is_same<BaseToType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
+        else if (std::is_same<BaseFromType, char>::value && std::is_same<ConvertTo, std::wstring>::value)
         {
             //utf8 to W
             // 预算-缓冲区中宽字节的长度      

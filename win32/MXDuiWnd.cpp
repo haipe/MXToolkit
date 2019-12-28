@@ -251,7 +251,7 @@ namespace mxtoolkit
         if (m_xmlFile == _T("FLTaskBarIcon.xml"))
         {
             CHAR ss[MAX_PATH];
-            sprintf(ss, "wnd:%d,[msg:%x, w:%d, l:%d]-----------------------.\n", m_hWnd, uMsg, wParam, lParam);
+            sprintf(ss, "wnd:%ud,[msg:%x, w:%d, l:%d]-----------------------.\n", (DWORD)m_hWnd, uMsg, wParam, lParam);
             OutputDebugStringA(ss);
         }
 #endif
@@ -412,13 +412,13 @@ namespace mxtoolkit
             pt.y >= rcCaption.top && 
             pt.y < rcCaption.bottom)
         {
-            DuiLib::CControlUI* pControl = m_pm.FindControl(pt);
+            DuiLib::CControlUI* pControl = static_cast<DuiLib::CControlUI*>(m_pm.FindControl(pt));
             LPCTSTR className = pControl ? pControl->GetClass() : NULL;
-            if (className &&
-                (_tcscmp(className, _T("ButtonUI")) != 0) &&
-                (_tcscmp(className, _T("OptionUI")) != 0) &&
-                (_tcscmp(className, _T("TextUI")) != 0) &&
-                (_tcscmp(className, _T("ComboUI")) != 0))	//增加对Combo控件过滤
+            if (pControl &&
+                _tcscmp(className, DUI_CTR_BUTTON) != 0 &&
+                _tcscmp(className, DUI_CTR_OPTION) != 0 &&
+                _tcscmp(className, DUI_CTR_TEXT) != 0 &&
+                _tcscmp(className, L"ComboUI") != 0)	//增加对Combo控件过滤
                 return HTCAPTION;
         }
 
