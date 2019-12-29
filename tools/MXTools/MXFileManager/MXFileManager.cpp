@@ -106,11 +106,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     OperateFileInfo info;
     info.download_url = cmdUrl;
 
-    DownloadFile(info);
-    
+    int ret = DownloadFile(info);
+    if(ret != 0)
+    {
+        printf("download fail :%d\n", ret);
+        return -1;
+    }
+
     printf("download completed!\n");
 
-    UnzipFile(info);
+    ret = UnzipFile(info);
+    if (ret != 0)
+    {
+        printf("unzip fail :%d\n", ret);
+        return -2;
+    }
 
     printf("unzip completed!\n");
 
@@ -137,10 +147,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 int UnzipFile(OperateFileInfo& info)
 {
     info.unzip_file = info.download_file.substr(0, info.download_file.find_last_of("\\") + 1);
-    OperateUnzip::Unzip(info.download_file.c_str(), info.unzip_file.c_str(), "");
+    if (OperateUnzip::Unzip(info.download_file.c_str(), info.unzip_file.c_str(), "") != 0)
+    {
+        info.unzip_file.clear();
+        return -1;
+    }
+
     info.unzip_file += "\\";
     info.unzip_file += info.download_url.substr(info.download_url.find_last_of("/") + 1);
-
     return 0;
 }
 

@@ -33,6 +33,9 @@
     <ClInclude Include="..\..\..\win32\Win32Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GetApp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MainWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GetApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,14 +66,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MXFileManager.exe" />
-    <None Include="xml1.bin">
-      <Filter>资源文件</Filter>
-    </None>
-    <None Include="xml2.bin">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="main.xml" />
+    <Xml Include="wasai.xml" />
   </ItemGroup>
 </Project>

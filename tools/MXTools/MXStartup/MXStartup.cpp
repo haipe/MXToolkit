@@ -3,8 +3,14 @@
 
 #include "stdafx.h"
 #include "MXStartup.h"
+#include <fstream>
+#include <iostream>
+
+#include "libxml/tree.h"
 
 #include "MainWindow.h"
+
+#pragma comment(lib,"libxml.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib,"DuiLib_StaticD.lib")
@@ -19,27 +25,9 @@
 HINSTANCE hInst;                                // 当前实例
 WCHAR szTitle[MAX_LOADSTRING];                  // 标题栏文本
 WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
+std::string g_appDir_a;
+std::wstring g_appDir_w;
 
-
-bool LoadRc(LPCTSTR sourceName, LPCTSTR sourceType, void** buffer, unsigned int* size)
-{
-    HRSRC hResourceFile = FindResource(hInst, sourceName, sourceType);
-    if (!hResourceFile)
-        return false;
-
-    if (size)
-    {
-        *size = SizeofResource(hInst, hResourceFile);
-    }
-
-    if (buffer)
-    {
-        HANDLE hglob = LoadResource(hInst, hResourceFile);
-        *buffer = LockResource(hglob);
-    }
-
-    return true;
-}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -57,13 +45,33 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         
     CHAR path[MAX_PATH] = {0};
     GetModuleFileNameA(NULL, path, MAX_PATH);
-    std::string appDir = path;
-    appDir = appDir.substr(0, appDir.find_last_of('\\') + 1);
+    g_appDir_a = path;
+    g_appDir_a = g_appDir_a.substr(0, g_appDir_a.find_last_of('\\') + 1);
+    mxtoolkit::WAConvert<std::string, std::wstring>(g_appDir_a.c_str(), &g_appDir_w);
     
+    //判断是否有Wasai app
+    if (true)
+    {
+        std::string wasaiXml = g_appDir_a + "\\wasai.xml";
+        std::fstream f(wasaiXml.c_str(), std::ios::in);
+        if (!f.is_open())
+        {
+            //从资源里面解压
+            std::string xmlStr;
+            mxtoolkit::LoadResource(L"XML", IDR_XML_WASAI, &xmlStr);
+
+            f = std::fstream(wasaiXml.c_str(), std::ios::binary | std::ios::out);
+            f.write(xmlStr.c_str(), xmlStr.length());
+            f.close();
+        }
+
+        f.close();
+    }
+
     //先判断原有文件是否存在，一样的
     unsigned int fileSize = 0;
     bool needUnzip = mxtoolkit::LoadResource(L"E", IDR_E_FILEMANAGER, NULL, &fileSize);
-    std::string mxFilePath = appDir + "MXFile.exe";
+    std::string mxFilePath = g_appDir_a + "MXFile.exe";
     do
     {
         if(!needUnzip)
@@ -99,9 +107,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // 执行应用程序初始化:
     DuiLib::CPaintManagerUI::SetInstance(hInstance);
     DuiLib::CPaintManagerUI::SetResourceDll(hInstance);
-    std::wstring dirPath;
-    mxtoolkit::WAConvert<std::string, std::wstring>(appDir.c_str(), &dirPath);
-    DuiLib::CPaintManagerUI::SetResourcePath(dirPath.c_str());
+
+    DuiLib::CPaintManagerUI::SetResourcePath(g_appDir_w.c_str());
 
     MainWindow wnd;
     wnd.SetNotify(dynamic_cast<DuiLib::INotifyUI*>(&wnd));

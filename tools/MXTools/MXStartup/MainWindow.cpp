@@ -6,12 +6,8 @@
 MainWindow::MainWindow()
     : MXDuiWnd(_T(""))
 {
-    void* xmlBuffer = nullptr;
-    if (!mxtoolkit::LoadResource<int>(L"XML", IDR_XML_MAIN, &xmlBuffer, nullptr) && xmlBuffer)
-        return;
-
     std::wstring xmlStr;
-    if (mxtoolkit::WUtf8Convert<std::string, std::wstring>((const char*)xmlBuffer, &xmlStr).empty())
+    if (!mxtoolkit::LoadResource<std::wstring>(L"XML", IDR_XML_MAIN, &xmlStr))
         return;
 
     m_xmlFile = xmlStr;

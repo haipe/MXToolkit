@@ -66,7 +66,7 @@ bool OperateUnzip::Unzip(const char* zipFileName ,const char* unzipDir ,const ch
     ret_value = DoExtract(uf, password);
 
     unzClose(uf);
-    return true;
+    return ret_value;
 }
 
 void OperateUnzip::ChangeFileDate(const char *filename, uLong dosdate, tm_unz tmu_date)
@@ -264,6 +264,7 @@ int OperateUnzip::DoExtract(unzFile uf, const char* password)
     if (err != UNZ_OK)
     {
         printf("error %d with zipfile in unzGetGlobalInfo \n", err);
+        return -1;
     }
 
     for (uLong i = 0; i < gi.number_entry; i++) 
