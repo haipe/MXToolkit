@@ -14,6 +14,8 @@
 #include "libxml/tree.h"
 
 #include "MXStringKit.h"
+#include "Win32FileCertUtil.h"
+
 #include "OperateZip.h"
 
 #include "AnonymousPip.h"
@@ -123,32 +125,6 @@ BOOL GetRootFiles(std::string findPath, std::vector<std::string>& rootFile)
     }
 
     return 0;
-}
-
-std::string GetMD5(const std::string& file)
-{
-doAgain:
-    std::string cmd = "certutil -hashfile ";
-    cmd += file;
-    cmd += " MD5";
-
-    std::string res;
-    AnonymousPip::CreateCmd(cmd, [&res](const std::string & result) {
-        res += result;
-    });
-
-    std::vector<std::string> resSplit;
-    mxtoolkit::SplitString<std::string>(res, "\r\n", &resSplit);
-
-    if (resSplit.size() >= 2 && resSplit[1].length() == 32)
-    {
-        printf("file MD5:%s.\n", resSplit[1].c_str());
-        return resSplit[1];
-    }
-
-    printf("Get MD5 Again.\n");
-    goto doAgain;
-    return "";
 }
 
 void MakeFileInfo(const std::string& path)
@@ -263,7 +239,7 @@ int main(int argc, char* argv[])
             xmlNewProp(fileNode, BAD_CAST"compress", BAD_CAST "true");
             xmlNewProp(fileNode, BAD_CAST"version", BAD_CAST "2019-12-27 18:00:00");
 
-            std::string md5 = GetMD5(outPath);
+            std::string md5 = mxtoolkit::GetMD5<std::string>(outPath);
             xmlNewTextChild(fileNode, NULL, BAD_CAST "MD5", BAD_CAST md5.c_str());
 
             xmlAddChild(root_node, fileNode);
