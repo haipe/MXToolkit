@@ -190,11 +190,46 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
     
     //下载app.xml 文件
+    std::string appXmlPath = g_appDir_a + appInfo.appName + "\\app.xml";
     std::string mxFileParam = "-d true -u ";
     mxFileParam += (appInfo.appHosts[0] + appInfo.appName + "/app.xml");
+    mxFileParam += (" -l " + appXmlPath);
 
     Execute(mxFilePath, mxFileParam);
     
+    //解析app.xml下载所有文件
+    do 
+    {
+        xmlKeepBlanksDefault(0);
+        xmlDocPtr xmlDoc = xmlReadFile(appXmlPath.c_str(), "UTF-8", XML_PARSE_RECOVER);
+        if (xmlDoc == NULL)
+        {
+            printf("error:can't open :%s!\n", startupXml.c_str());
+            break;
+        }
+
+        /*****************获取xml文档对象的根节对象********************/
+        xmlNodePtr rootNode = NULL;
+        rootNode = xmlDocGetRootElement(xmlDoc);
+        if (rootNode == NULL)
+        {
+            printf("error: file is empty!\n");
+            break;
+        }
+
+        xmlChar *xpath = BAD_CAST("//App"); //xpath语句
+        mxtoolkit::LoadResult(xmlDoc, xpath, [&](xmlNodePtr node)
+        {
+
+            return true;//找多个
+        });
+        
+        /*****************释放资源********************/
+        xmlFreeDoc(xmlDoc);
+        xmlCleanupParser();
+        xmlMemoryDump();
+    } while (0);
+
     // 执行应用程序初始化:
     DuiLib::CPaintManagerUI::SetInstance(hInstance);
     DuiLib::CPaintManagerUI::SetResourceDll(hInstance);
