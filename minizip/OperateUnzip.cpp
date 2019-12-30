@@ -50,7 +50,7 @@ bool OperateUnzip::Unzip(const char* zipFileName ,const char* unzipDir ,const ch
 
     if (uf == nullptr)
     {
-        printf("Cannot open %s or %s.zip\n", zipFileName, zipFileName);
+        printf("Cannot open %s.\n", zipFileName);
         return false;
     }
     
@@ -66,7 +66,7 @@ bool OperateUnzip::Unzip(const char* zipFileName ,const char* unzipDir ,const ch
     ret_value = DoExtract(uf, password);
 
     unzClose(uf);
-    return ret_value;
+    return ret_value == 0;
 }
 
 void OperateUnzip::ChangeFileDate(const char *filename, uLong dosdate, tm_unz tmu_date)
