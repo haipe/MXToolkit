@@ -48,6 +48,10 @@ namespace mxtoolkit
         typename BaseToType = ConvertTo::allocator_type::value_type>
     ConvertTo& WAConvert(const typename BaseFromType* from, typename ConvertTo* to)
     {
+        to->clear();
+        if (from == nullptr)
+            return *to;
+
         if (std::is_same<BaseFromType, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
         {
             //W to A
@@ -88,6 +92,10 @@ namespace mxtoolkit
         typename BaseToType = ConvertTo::allocator_type::value_type>
     ConvertTo& WUtf8Convert(const typename BaseFromType* from, typename ConvertTo* to)
     {
+        to->clear();
+        if (from == nullptr)
+            return *to;
+
         if (std::is_same<BaseFromType, wchar_t>::value && std::is_same<ConvertTo, std::string>::value)
         {
             //W to utf8
