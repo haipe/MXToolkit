@@ -16,6 +16,8 @@
 #pragma comment(lib,"openssl.lib")
 #pragma comment(lib,"zlib.lib")
 
+#include "imagehlp.h"
+#pragma comment(lib,"imagehlp.lib")
 
 #include <tchar.h>
 
@@ -104,13 +106,35 @@ goEnd:
 #endif
 
     std::map<std::string, std::string> startupParam;
-    mxtoolkit::GetStartupOptions("u:m:d:c:", &startupParam);
+    mxtoolkit::GetStartupOptions("d:u:m:c:l:", &startupParam);
 
     bDebug = startupParam["d"].empty() ? false : true;    
 
     info.wasCompress = startupParam["c"].empty() ? false : true;
     info.downloadUrl = startupParam["u"];
     info.fileMD5 = startupParam["m"];
+    info.downloadFile = startupParam["l"];
+    if (info.downloadFile.empty())
+    {
+        CHAR exePath[256] = { 0 };
+        GetModuleFileNameA(nullptr, exePath, sizeof(exePath));
+        std::string filePath = exePath;
+        filePath = filePath.substr(0, filePath.find_last_of('\\') + 1);
+
+        if (info.wasCompress)
+        {
+            DWORD tick = GetCurrentTime();
+            filePath += "_temp[";
+            filePath += std::to_string(tick);
+            filePath += "].mx";
+        }
+        else
+        {
+            filePath += info.downloadUrl.substr(info.downloadUrl.find_last_of('//') + 1);
+        }
+
+        info.downloadFile = filePath;
+    }
 
     if (bDebug)
         InitConsoleWindow();
@@ -122,8 +146,12 @@ goEnd:
         goto goEnd;
     }
 
-    wprintf(L"cmd :%s\n", lpCmdLine);
-    
+    wprintf(L"cmd :%s\n", lpCmdLine); 
+
+    //创建目录
+    std::string destDir = info.downloadFile.substr(0, info.downloadFile.find_last_of('\\') + 1);
+    MakeSureDirectoryPathExists(destDir.c_str());
+
     int ret = DownloadFile(info);
     if(ret != 0)
     {
@@ -195,24 +223,6 @@ int DownloadFile(OperateFileInfo& info)
     CURL *curl;
     CURLcode res;
 
-    CHAR exePath[256] = { 0 };
-    GetModuleFileNameA(nullptr, exePath, sizeof(exePath));
-    std::string filePath = exePath;
-    filePath = filePath.substr(0, filePath.find_last_of('\\') + 1);
-
-    if (info.wasCompress)
-    {
-        DWORD tick = GetCurrentTime();
-        filePath += "_temp[";
-        filePath += std::to_string(tick);
-        filePath += "].mx";
-    }
-    else
-    {
-        filePath += info.downloadUrl.substr(info.downloadUrl.find_last_of('//') + 1);
-    }
-
-    info.downloadFile = filePath;
     info.downloadStream = nullptr;
 
     printf("download url:%s.\n", info.downloadUrl.c_str());

@@ -38,8 +38,10 @@ struct StartupAppInfo
     std::string appFile;
     std::string appVersion;
 
-    std::list<std::string> appHosts;
+    std::vector<std::string> appHosts;
 };
+
+int Execute(const std::string& filePath, const std::string& runParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -142,9 +144,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     //判断应用是否存在，如果存在，则直接启动
     std::string appPath = g_appDir_a + appInfo.appName;
     appPath += "\\";
+    appPath += appInfo.appVersion;
+    appPath += "\\";
     appPath += appInfo.appFile;
     bool isAppExist = mxtoolkit::FileExist(appPath);
-
+    if (isAppExist)
+    {
+        return 0;
+    }
 
     //先判断原有文件是否存在，一样的
     unsigned int fileSize = 0;
@@ -181,7 +188,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
             newFile.close();
         }
     }
+    
+    //下载app.xml 文件
+    std::string mxFileParam = "-d true -u ";
+    mxFileParam += (appInfo.appHosts[0] + appInfo.appName + "/app.xml");
 
+    Execute(mxFilePath, mxFileParam);
+    
     // 执行应用程序初始化:
     DuiLib::CPaintManagerUI::SetInstance(hInstance);
     DuiLib::CPaintManagerUI::SetResourceDll(hInstance);
@@ -197,4 +210,53 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     return 0;
+}
+
+int Execute(const std::string& filePath, const std::string& runParam)
+{
+    DWORD exitCode = 0;
+    PROCESS_INFORMATION pInfo = { 0 };
+    STARTUPINFOA        sInfo = { 0 };
+    sInfo.cb = sizeof(STARTUPINFO);
+    sInfo.wShowWindow = SW_SHOW;
+
+    std::string cmd = filePath + " ";
+    cmd += runParam;
+
+    if (CreateProcessA(
+        NULL,      //LPCTSTR lpApplicationName, // pointer to name of executable module
+        (LPSTR)cmd.c_str(),   //LPTSTR lpCommandLine,  // pointer to command line string
+        NULL,      //LPSECURITY_ATTRIBUTES lpProcessAttributes,  // process security attributes
+        NULL,      //LPSECURITY_ATTRIBUTES lpThreadAttributes,   // thread security attributes
+        FALSE,     //BOOL bInheritHandles,  // handle inheritance flag
+        0,         //DWORD dwCreationFlags, // creation flags
+        NULL,      //LPVOID lpEnvironment,  // pointer to new environment block
+        NULL,      //LPCTSTR lpCurrentDirectory,   // pointer to current directory name
+        &sInfo,    //LPSTARTUPINFO lpStartupInfo,  // pointer to STARTUPINFO
+        &pInfo))    //LPPROCESS_INFORMATION lpProcessInformation  // pointer to PROCESS_INFORMATION
+    {
+        // Wait until child process exits.
+        WaitForSingleObject(pInfo.hProcess, INFINITE);
+
+        if (GetExitCodeProcess(pInfo.hProcess, &exitCode))
+        {
+            printf("Exit code = %d/n", exitCode);
+        }
+        else
+        {
+            printf("GetExitCodeProcess() failed: %ld/n", GetLastError());
+            ASSERT(0);
+        }
+
+        // Close process and thread handles. 
+        CloseHandle(pInfo.hProcess);
+        CloseHandle(pInfo.hThread);
+    }
+    else
+    {
+        printf("CreateProcess() failed: %ld/n", GetLastError());
+        ASSERT(0);
+    }
+
+    return exitCode;
 }
