@@ -16,6 +16,12 @@
     <Filter Include="minizip">
       <UniqueIdentifier>{c5a92699-2569-436c-8ca6-232ef38377da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="getopt">
+      <UniqueIdentifier>{b41ce026-6f41-4778-86c9-e3e33b74e760}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{f9018f80-9d15-4336-99d0-53fbc1b76f8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -30,26 +36,32 @@
     <ClInclude Include="MXFileManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\crypt.h">
+    <ClInclude Include="..\..\..\minizip\crypt.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\ioapi.h">
+    <ClInclude Include="..\..\..\minizip\ioapi.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\iowin32.h">
+    <ClInclude Include="..\..\..\minizip\iowin32.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\mztools.h">
+    <ClInclude Include="..\..\..\minizip\mztools.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\unzip.h">
+    <ClInclude Include="..\..\..\minizip\unzip.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\zip.h">
+    <ClInclude Include="..\..\..\minizip\zip.h">
       <Filter>minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\minizip\OperateUnzip.h">
+    <ClInclude Include="..\..\..\minizip\OperateUnzip.h">
       <Filter>minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\getopt\getopt.h">
+      <Filter>getopt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\getopt\mxcmdline.h">
+      <Filter>getopt</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -59,23 +71,29 @@
     <ClCompile Include="MXFileManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\ioapi.c">
+    <ClCompile Include="..\..\..\minizip\ioapi.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\iowin32.c">
+    <ClCompile Include="..\..\..\minizip\iowin32.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\mztools.c">
+    <ClCompile Include="..\..\..\minizip\mztools.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\unzip.c">
+    <ClCompile Include="..\..\..\minizip\unzip.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\zip.c">
+    <ClCompile Include="..\..\..\minizip\zip.c">
       <Filter>minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\minizip\OperateUnzip.cpp">
+    <ClCompile Include="..\..\..\minizip\OperateUnzip.cpp">
       <Filter>minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\getopt\getopt.c">
+      <Filter>getopt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\getopt\mxcmdline.cpp">
+      <Filter>getopt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,7 +110,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\minizip\Makefile">
+    <None Include="..\..\..\minizip\Makefile">
       <Filter>minizip</Filter>
     </None>
   </ItemGroup>

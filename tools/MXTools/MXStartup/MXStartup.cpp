@@ -5,10 +5,11 @@
 #include "MXStartup.h"
 #include <fstream>
 #include <iostream>
+#include <list>
+#include <string>
 
-#include "libxml/tree.h"
-
-#include "MainWindow.h"
+#include "MXLibxml.h"
+#include "Win32FileCertUtil.h"
 
 #pragma comment(lib,"libxml.lib")
 
@@ -20,6 +21,9 @@
 
 #endif
 
+#include "MainWindow.h"
+
+
 #define MAX_LOADSTRING 100
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
@@ -28,6 +32,14 @@ WCHAR szWindowClass[MAX_LOADSTRING];            // 主窗口类名
 std::string g_appDir_a;
 std::wstring g_appDir_w;
 
+struct StartupAppInfo 
+{
+    std::string appName;
+    std::string appFile;
+    std::string appVersion;
+
+    std::list<std::string> appHosts;
+};
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -50,23 +62,89 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     mxtoolkit::WAConvert<std::string, std::wstring>(g_appDir_a.c_str(), &g_appDir_w);
     
     //判断是否有Wasai app
-    if (true)
+    std::string startupXml = g_appDir_a + "\\startup.xml";
+    do
     {
-        std::string wasaiXml = g_appDir_a + "\\wasai.xml";
-        std::fstream f(wasaiXml.c_str(), std::ios::in);
+        std::fstream f(startupXml.c_str(), std::ios::in);
         if (!f.is_open())
         {
             //从资源里面解压
             std::string xmlStr;
-            mxtoolkit::LoadResource(L"XML", IDR_XML_WASAI, &xmlStr);
+            mxtoolkit::LoadResource(L"XML", IDR_XML_STARTUP, &xmlStr);
 
-            f = std::fstream(wasaiXml.c_str(), std::ios::binary | std::ios::out);
+            f = std::fstream(startupXml.c_str(), std::ios::binary | std::ios::out);
             f.write(xmlStr.c_str(), xmlStr.length());
             f.close();
         }
 
         f.close();
-    }
+    } while (0);
+
+    //加载wasai.xml，
+    StartupAppInfo appInfo;
+    do
+    {
+        /*****************打开xml文档********************/
+        //必须加上，防止程序把元素前后的空白文本符号当作一个node
+        xmlKeepBlanksDefault(0);
+        xmlDocPtr xmlDoc = xmlReadFile(startupXml.c_str(), "UTF-8", XML_PARSE_RECOVER);
+        if (xmlDoc == NULL)
+        {
+            printf("error:can't open :%s!\n", startupXml.c_str());
+            break;
+        }
+
+        /*****************获取xml文档对象的根节对象********************/
+        xmlNodePtr rootNode = NULL;
+        rootNode = xmlDocGetRootElement(xmlDoc);
+        if (rootNode == NULL)
+        {
+            printf("error: file is empty!\n");
+            break;
+        }
+
+        xmlChar *xpath = BAD_CAST("//Host"); //xpath语句
+        mxtoolkit::LoadResult(xmlDoc, xpath, [&](xmlNodePtr node)
+        {
+            std::string host = (const char*)XML_GET_CONTENT(node->xmlChildrenNode);
+            appInfo.appHosts.emplace_back(host);
+            return true;//找多个
+        });
+        
+        xpath = BAD_CAST("//App"); //xpath语句
+        mxtoolkit::LoadResult(xmlDoc, xpath, [&](xmlNodePtr node)
+        {
+            appInfo.appName = (const char*)XML_GET_CONTENT(node->xmlChildrenNode);
+            xmlChar* attrValue = NULL;
+
+            attrValue = xmlGetProp(node, BAD_CAST("file"));
+            if (attrValue)
+            {
+                appInfo.appFile = (const char*)attrValue;
+                xmlFree(attrValue);
+            }
+
+            attrValue = xmlGetProp(node, BAD_CAST("version"));
+            if (attrValue)
+            {
+                appInfo.appVersion = (const char*)attrValue;
+                xmlFree(attrValue);
+            }
+            return false;//只找一个
+        });
+
+        /*****************释放资源********************/
+        xmlFreeDoc(xmlDoc);
+        xmlCleanupParser();
+        xmlMemoryDump();
+    } while (0);
+    
+    //判断应用是否存在，如果存在，则直接启动
+    std::string appPath = g_appDir_a + appInfo.appName;
+    appPath += "\\";
+    appPath += appInfo.appFile;
+    bool isAppExist = mxtoolkit::FileExist(appPath);
+
 
     //先判断原有文件是否存在，一样的
     unsigned int fileSize = 0;

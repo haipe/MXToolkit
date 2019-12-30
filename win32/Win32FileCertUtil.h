@@ -1,10 +1,30 @@
 ﻿#pragma once
 #include <Windows.h>
+#include <fstream>
 #include "MXStringKit.h"
-#include "AnonymousPip.h"
+#include "MXAnonymousPip.h"
 
 namespace mxtoolkit
 {
+    template<typename T = std::string, typename StrType = T::allocator_type::value_type>
+    bool FileExist(const T& path) 
+    {
+        if (path.empty())
+            return false;
+
+        //if (std::is_same<StrType, wchar_t>::value)
+        {
+            std::wfstream f(path, std::ios::in);
+            if (f.is_open())
+            {
+                f.close();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     template<typename T = std::string, typename StrType = T::allocator_type::value_type>
     T GetMD5(const std::string& file)
     {
@@ -14,7 +34,7 @@ namespace mxtoolkit
         cmd += " MD5";
 
         std::string res;
-        AnonymousPip::CreateCmd(cmd, [&res](const std::string & result) {
+        MXAnonymousPip::CreateCmd<std::string>(cmd, [&res](const std::string & result) {
             res += result;
         });
 

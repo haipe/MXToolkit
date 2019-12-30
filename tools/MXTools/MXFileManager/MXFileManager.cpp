@@ -22,8 +22,12 @@
 #include "fcntl.h"
 #include "io.h"
 
+#include "MXCmdline.h"
+
 #include "OperateUnzip.h"
 #include "MXStringKit.h"
+
+#include "Win32FileCertUtil.h"
 
 void InitConsoleWindow()
 {
@@ -40,11 +44,13 @@ void InitConsoleWindow()
 
 struct OperateFileInfo
 {
-    std::string download_url;   //下载地址
-    std::string download_file;  //下载文件
-    std::string unzip_file;     //解压文件
+    bool wasCompress = false;   //是否压缩
+    std::string downloadUrl;    //下载地址
+    std::string fileMD5;        //文件MD5校验
+    std::string downloadFile;   //下载文件
+    std::string unzipFile;      //解压文件
 
-    FILE *download_stream = nullptr;
+    FILE *downloadStream = nullptr;
 };
 
 int DownloadFile(OperateFileInfo& info);
@@ -64,112 +70,124 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     DWORD startTick = GetCurrentTime();
 
-    // TODO: 在此处放置代码。    
-    std::string cmdUrl;
-    mxtoolkit::WUtf8Convert<std::wstring, std::string>(lpCmdLine, &cmdUrl);
+    // TODO: 在此处放置代码。 
+    int returnValue = 999;
+    bool bDebug = true;
+    OperateFileInfo info;
 
-#ifdef _DEBUG
-    if (cmdUrl.empty())
+goEnd:
+    if (returnValue != 999)
     {
-        //cmdUrl = "https://moooxin.gitee.io/MXApps/qt/5.13.2/D3Dcompiler_47.dll";
-        cmdUrl = "https://moooxin.gitee.io/MXApps/miniblink/node.dll";
+        if (bDebug)
+        {
+            DWORD endTick = GetCurrentTime();
+            DWORD runTime = endTick - startTick;
+            std::string useTime = "一共用时 [";
+            useTime += std::to_string(runTime / 1000);
+            useTime += "] 秒.";
+
+            printf("%s\n", useTime.c_str());
+            MessageBoxA(NULL, useTime.c_str(), "MXFileManager", MB_OK);
+        }
+        else
+        {
+            if(info.wasCompress)
+                DeleteFileA(info.downloadFile.c_str());
+        }
+
+        return returnValue;
     }
         
+#ifdef _DEBUG    
+    //"-u https://moooxin.gitee.io/MXApps/miniblink/node.dll -d true -m dsadada";
+
 #endif
 
-    if (cmdUrl.empty())
-        return 0;
+    std::map<std::string, std::string> startupParam;
+    mxtoolkit::GetStartupOptions("u:m:d:c:", &startupParam);
 
-#ifdef _DEBUG
-    bool bDebug = true;
+    bDebug = startupParam["d"].empty() ? false : true;    
 
-#else
-    bool bDebug = false;
+    info.wasCompress = startupParam["c"].empty() ? false : true;
+    info.downloadUrl = startupParam["u"];
+    info.fileMD5 = startupParam["m"];
 
-    std::vector<std::string> cmds;
-    if (mxtoolkit::SplitString<std::string>(cmdUrl, " ", &cmds) <= 0)
-        return 0;
-
-    for (auto item : cmds)
-    {
-        bDebug = (item == "debug");
-        if (bDebug)
-            break;
-    }
-
-    cmdUrl = cmds[0];
-#endif
-
-    if(bDebug)
+    if (bDebug)
         InitConsoleWindow();
     
-    OperateFileInfo info;
-    info.download_url = cmdUrl;
+    if (info.downloadUrl.empty())
+    {
+        printf("not have file param.\n");
+        returnValue = -1;
+        goto goEnd;
+    }
 
+    wprintf(L"cmd :%s\n", lpCmdLine);
+    
     int ret = DownloadFile(info);
     if(ret != 0)
     {
         printf("download fail :%d\n", ret);
-        return -1;
+        returnValue = -2;
+        goto goEnd;
     }
 
     printf("download completed!\n");
 
-    ret = UnzipFile(info);
-    if (ret != 0)
+    if (!info.fileMD5.empty())
     {
-        printf("unzip fail :%d\n", ret);
-        return -2;
+        std::string md5 = mxtoolkit::GetMD5(info.downloadFile.c_str());
+        if (md5 != info.fileMD5)
+        {
+            printf("file cert fail!\n");
+            returnValue = -3;
+            goto goEnd;
+        }
     }
 
-    printf("unzip completed!\n");
-
-    DWORD endTick = GetCurrentTime();
-
-    if (bDebug)
+    if (info.wasCompress)
     {
-        DWORD runTime = endTick - startTick;
-        std::string useTime = "一共用时 [";
-        useTime += std::to_string(runTime / 1000);
-        useTime += "] 秒.";
+        ret = UnzipFile(info);
+        if (ret != 0)
+        {
+            printf("unzip fail :%d\n", ret);
+            returnValue = -4;
+            goto goEnd;
+        }
 
-        printf("%s\n",useTime.c_str());
-        MessageBoxA(NULL, useTime.c_str(), "MXFileManager", MB_OK);
+        printf("unzip completed!\n");
     }
-    else
-    {
-        DeleteFileA(info.download_file.c_str());
-    }
-    
-    return (int) 0;
+
+    returnValue = 0;
+    goto goEnd;
 }
 
 int UnzipFile(OperateFileInfo& info)
 {
-    info.unzip_file = info.download_file.substr(0, info.download_file.find_last_of("\\") + 1);
-    if (OperateUnzip::Unzip(info.download_file.c_str(), info.unzip_file.c_str(), "") != 0)
+    info.unzipFile = info.downloadFile.substr(0, info.downloadFile.find_last_of("\\") + 1);
+    if (!OperateUnzip::Unzip(info.downloadFile.c_str(), info.unzipFile.c_str(), ""))
     {
-        info.unzip_file.clear();
+        info.unzipFile.clear();
         return -1;
     }
 
-    info.unzip_file += "\\";
-    info.unzip_file += info.download_url.substr(info.download_url.find_last_of("/") + 1);
+    info.unzipFile += "\\";
+    info.unzipFile += info.downloadUrl.substr(info.downloadUrl.find_last_of("/") + 1);
     return 0;
 }
 
 size_t WriteToFile(void *buffer, size_t size, size_t nmemb, void *stream)
 {
     struct OperateFileInfo *out = (struct OperateFileInfo *)stream;
-    if (out && !out->download_stream)
+    if (out && !out->downloadStream)
     {
         /* open file for writing */
-        out->download_stream = fopen(out->download_file.c_str(), "wb");
-        if (!out->download_stream)
+        out->downloadStream = fopen(out->downloadFile.c_str(), "wb");
+        if (!out->downloadStream)
             return -1; /* failure, can‘t open file to write */
     }
 
-    return fwrite(buffer, size, nmemb, out->download_stream);
+    return fwrite(buffer, size, nmemb, out->downloadStream);
 }
 
 int DownloadFile(OperateFileInfo& info)
@@ -180,18 +198,25 @@ int DownloadFile(OperateFileInfo& info)
     CHAR exePath[256] = { 0 };
     GetModuleFileNameA(nullptr, exePath, sizeof(exePath));
     std::string filePath = exePath;
-    filePath = filePath.substr(0, filePath.find_last_of('\\'));
+    filePath = filePath.substr(0, filePath.find_last_of('\\') + 1);
 
-    DWORD tick = GetCurrentTime();
-    filePath += "\\_temp[";
-    filePath += std::to_string(tick);
-    filePath += "].mx";
+    if (info.wasCompress)
+    {
+        DWORD tick = GetCurrentTime();
+        filePath += "_temp[";
+        filePath += std::to_string(tick);
+        filePath += "].mx";
+    }
+    else
+    {
+        filePath += info.downloadUrl.substr(info.downloadUrl.find_last_of('//') + 1);
+    }
 
-    info.download_file = filePath;
-    info.download_stream = nullptr;
+    info.downloadFile = filePath;
+    info.downloadStream = nullptr;
 
-    printf("download url:%s.\n", info.download_url.c_str());
-    printf("download file:%s.\n", info.download_file.c_str());
+    printf("download url:%s.\n", info.downloadUrl.c_str());
+    printf("download file:%s.\n", info.downloadFile.c_str());
 
     curl_global_init(CURL_GLOBAL_ALL);
     /* get a curl handle */
@@ -203,7 +228,7 @@ int DownloadFile(OperateFileInfo& info)
 
     /*设置easy handle属性*/
     /* specify URL */
-    curl_easy_setopt(curl, CURLOPT_URL, info.download_url.c_str());
+    curl_easy_setopt(curl, CURLOPT_URL, info.downloadUrl.c_str());
     /* Define our callback to get called when there‘s data to be written */
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteToFile);
     /* Set a pointer to our struct to pass to the callback */
@@ -231,10 +256,10 @@ int DownloadFile(OperateFileInfo& info)
     }
 
     // 释放资源
-    if (info.download_stream)
+    if (info.downloadStream)
     {
-        fclose(info.download_stream); /* close the local file */
-        info.download_stream = nullptr;
+        fclose(info.downloadStream); /* close the local file */
+        info.downloadStream = nullptr;
     }
 
     curl_easy_cleanup(curl);

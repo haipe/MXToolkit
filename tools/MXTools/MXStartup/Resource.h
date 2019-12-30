@@ -12,7 +12,7 @@
 #define IDR_MAINFRAME                   128
 #define IDR_E_FILEMANAGER               129
 #define IDR_XML_MAIN                    130
-#define IDR_XML_WASAI                   131
+#define IDR_XML_STARTUP                 131
 #define IDC_STATIC                      -1
 
 // Next default values for new objects

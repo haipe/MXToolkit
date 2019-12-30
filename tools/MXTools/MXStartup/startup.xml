@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <Host>https://haipe.github.io/MXApps/</Host>
+    <Host>https://moooxin.gitee.io/MXApps/</Host>
+    <App version="1.0.0.0" file="MXWasai.exe">mxwasai</App>
+<root>

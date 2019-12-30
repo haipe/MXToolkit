@@ -18,7 +18,6 @@
 
 #include "OperateZip.h"
 
-#include "AnonymousPip.h"
 
 #pragma comment(lib,"zlib.lib")
 #pragma comment(lib,"libxml.lib")
@@ -29,8 +28,10 @@
 
 #ifdef UNICODE
 typedef std::wstring TString;
+
 #else
 typedef std::string TString;
+
 #endif
 
 #define MAX_READ_BUFFER_SIZE 10240
