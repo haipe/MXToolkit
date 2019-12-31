@@ -17,8 +17,9 @@ GetApp::~GetApp()
         getAppThread_.join();
 }
 
-bool GetApp::Start(const std::string & app)
+bool GetApp::Start(HWND mainWnd)
 {
+    mainWnd_ = mainWnd;
     getAppThread_ = std::thread(std::bind(&GetApp::GetAppProcessor,this));
 
     return getAppThread_.native_handle() != 0;
@@ -30,6 +31,8 @@ void GetApp::GetAppProcessor()
     std::string startupXml = (mxtoolkit::Win32App<std::string>::CurrentDirectory() + "\\startup.xml");
     if (!mxtoolkit::FileExist(startupXml))
     {
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_UNZIP_STARTUP_XML, 0);
+
         //从资源里面解压
         void* xmlBuffer;
         int xmlSize = 0;
@@ -111,6 +114,7 @@ void GetApp::GetAppProcessor()
     {
         int ret = mxtoolkit::CreateProcess(appPath, "", 1000);//5秒
         //if (ret == 0)
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_RUN_APP, 0);
         return;
     }
 
@@ -124,6 +128,7 @@ void GetApp::GetAppProcessor()
     //解压成功，并且文件大小不一样，则解压覆盖
     if (mxtoolkit::LoadResource(L"E", IDR_E_FILEMANAGER, &resourceFileBuffer, &resourceFileSize) && resourceFileSize != fileSize)
     {
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_UNZIP_MXFILE_EXE, 0);
         std::fstream newFile(mxFilePath.c_str(), std::ios::binary | std::ios::out);
         if (newFile && newFile.is_open())
         {
@@ -142,6 +147,7 @@ void GetApp::GetAppProcessor()
     if (!mxtoolkit::FileExist(appXmlPath))  //Debug的时候 ，不存在才下载
 #endif
     {
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_DOWNLOAD_APP_XML, 0);
         mxtoolkit::CreateProcess(mxFilePath, mxFileParam);
     }
     //解析app.xml下载所有文件
@@ -250,10 +256,13 @@ void GetApp::GetAppProcessor()
         //fileParam += (" -m " + item.fileMD5);
         fileParam += (" -l " + appDownloadPath);
 
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_DOWNLOAD_APP_EXE, 0);
         mxtoolkit::CreateProcess(mxFilePath, fileParam);
 
         for (auto item : appRemoteFile.files)
         {
+            std::string * name = new std::string(item.fileName);
+            ::PostMessage(mainWnd_, MSG_GET_APP, MT_DOWNLOAD_APP_LIBRIRY, (LPARAM)name);
             std::string fileDownloadPath = baseDir + item.fileName;
 
             fileParam.clear();
@@ -266,6 +275,7 @@ void GetApp::GetAppProcessor()
             mxtoolkit::CreateProcess(mxFilePath, fileParam);
         }
 
+        ::PostMessage(mainWnd_, MSG_GET_APP, MT_RUN_APP, 0);
         mxtoolkit::CreateProcess(appDownloadPath, "", 0);
         break;
     }

@@ -60,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     if (wnd.Create(NULL, szWindowClass, UI_WNDSTYLE_DIALOG | WS_MINIMIZEBOX, WS_EX_WINDOWEDGE))
     {
         GetApp getApp;
-        getApp.Start("mxwasai");
+        getApp.Start(wnd.GetHWND());
 
         wnd.CenterWindow();
         wnd.ShowModal();

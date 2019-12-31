@@ -11,8 +11,13 @@ public:
     ~MainWindow();
 
 protected:
+    virtual HRESULT OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL* bHandled) override;
+
     virtual void Notify(DuiLib::TNotifyUI& msg) override;
 
+protected:
+    bool getAppCompleted = false;
+    DuiLib::CLabelUI* msgLabel_ = nullptr;
 
 };
 
