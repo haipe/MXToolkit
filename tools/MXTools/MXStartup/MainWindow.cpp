@@ -34,19 +34,19 @@ HRESULT MainWindow::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL* bHa
         {
         case GetApp::MT_UNZIP_STARTUP_XML:   //解压
         {
-            msg = L"正在解压startup.xml";
+            msg = L"正在解压 startup.xml";
         }break;
         case GetApp::MT_UNZIP_MXFILE_EXE:   //解压
         {
-            msg = L"正在解压MXFile.exe";
+            msg = L"正在解压 MXFile";
         }break;
         case GetApp::MT_DOWNLOAD_APP_XML:    //下载app.xml
         {
-            msg = L"正在下载app.xml";
+            msg = L"正在下载 app.xml";
         }break;
         case GetApp::MT_DOWNLOAD_APP_EXE:    //下载app.exe
         {
-            msg = L"正在下载app.exe";
+            msg = L"正在下载 app";
         }break;
         case GetApp::MT_DOWNLOAD_APP_LIBRIRY:    //下载app.所需库
         {
