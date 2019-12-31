@@ -162,7 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\common\MXLibxml.cpp" />
-    <ClCompile Include="..\..\..\win32\Win32ConsoleWindow.cpp" />
     <ClCompile Include="..\..\..\win32\Win32Process.cpp" />
     <ClCompile Include="GetApp.cpp" />
     <ClCompile Include="MainWindow.cpp" />

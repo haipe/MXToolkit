@@ -49,7 +49,7 @@
       <Filter>win32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\win32\Win32PathUtil.h">
-      <Filter>头文件</Filter>
+      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,9 +70,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\win32\Win32Process.cpp">
       <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\win32\Win32ConsoleWindow.cpp">
-      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
