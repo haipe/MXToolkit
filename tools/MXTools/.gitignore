@@ -44,5 +44,6 @@ gumbo/qt/Makefile
 *.stash
 
 Debug/
+Release/
 MXCompressTools/Release/
 MXFileManager/Release/
