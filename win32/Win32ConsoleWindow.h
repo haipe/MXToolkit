@@ -3,6 +3,9 @@
 #include "fcntl.h"
 #include "io.h"
 
+
+/*一个应用只要包含一次*/
+
 namespace mxtoolkit
 {
     FILE* mx_console_view_fp = nullptr;
@@ -29,4 +32,5 @@ namespace mxtoolkit
 
         mx_console_view_fp = nullptr;
     }
+
 }

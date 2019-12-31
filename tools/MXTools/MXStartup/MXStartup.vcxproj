@@ -150,6 +150,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\common\MXLibxml.h" />
+    <ClInclude Include="..\..\..\win32\Win32PathUtil.h" />
+    <ClInclude Include="..\..\..\win32\Win32Process.h" />
     <ClInclude Include="..\..\..\win32\Win32Resource.h" />
     <ClInclude Include="GetApp.h" />
     <ClInclude Include="MainWindow.h" />
@@ -160,6 +162,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\common\MXLibxml.cpp" />
+    <ClCompile Include="..\..\..\win32\Win32ConsoleWindow.cpp" />
+    <ClCompile Include="..\..\..\win32\Win32Process.cpp" />
     <ClCompile Include="GetApp.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MXStartup.cpp" />
