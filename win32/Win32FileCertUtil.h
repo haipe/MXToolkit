@@ -7,7 +7,7 @@
 namespace mxtoolkit
 {
     template<typename T = std::string, typename StrType = T::allocator_type::value_type>
-    bool FileExist(const T& path) 
+    bool FileExist(const T& path, unsigned int* fileSize = nullptr) 
     {
         if (path.empty())
             return false;
@@ -17,6 +17,13 @@ namespace mxtoolkit
             std::wfstream f(path, std::ios::in);
             if (f.is_open())
             {
+                if (fileSize)
+                {
+                    f.seekp(0, std::ios::end);
+                    unsigned long long fileSz = f.tellg();
+                    *fileSize = fileSz;
+                }
+
                 f.close();
                 return true;
             }

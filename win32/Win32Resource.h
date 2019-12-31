@@ -22,6 +22,8 @@ namespace mxtoolkit
         {
             HANDLE hglob = LoadResource(hInst, hResourceFile);
             *buffer = LockResource(hglob);
+
+            FreeResource(hglob);
         }
 
         return true;
@@ -53,6 +55,8 @@ namespace mxtoolkit
             {
                 *strResult = (const StrType*)buffer;
             }
+
+            FreeResource(hglob);
         }
         return true;
     }

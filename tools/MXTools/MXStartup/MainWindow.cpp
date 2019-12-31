@@ -28,6 +28,7 @@ void MainWindow::Notify(DuiLib::TNotifyUI& msg)
         if (msg.pSender == m_close)
         {
             Close();
+            ::PostMessage(m_hWnd, WM_QUIT, 0, 0);
         }
     }
 }

@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\..\minizip\OperateUnzip.h" />
     <ClInclude Include="..\..\..\minizip\unzip.h" />
     <ClInclude Include="..\..\..\minizip\zip.h" />
+    <ClInclude Include="..\..\..\win32\Win32ConsoleWindow.h" />
     <ClInclude Include="MXFileManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />

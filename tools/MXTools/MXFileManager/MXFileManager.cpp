@@ -21,8 +21,6 @@
 
 #include <tchar.h>
 
-#include "fcntl.h"
-#include "io.h"
 
 #include "MXCmdline.h"
 
@@ -30,19 +28,7 @@
 #include "MXStringKit.h"
 
 #include "Win32FileCertUtil.h"
-
-void InitConsoleWindow()
-{
-    int nCrt = 0;
-    AllocConsole();
-
-    FILE* fp = freopen("CONOUT$", "w", stdout);
-
-    //nCrt = _open_osfhandle((long)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
-    //fp = _fdopen(nCrt, "w");
-    //*stdout = *fp;
-    //setvbuf(stdout, NULL, _IONBF, 0);
-}
+#include "Win32ConsoleWindow.h"
 
 struct OperateFileInfo
 {
@@ -135,9 +121,21 @@ goEnd:
 
         info.downloadFile = filePath;
     }
+    else
+    {
+        //如果是压缩的，则改下名称
+        if (info.wasCompress)
+        {
+            info.downloadFile = info.downloadFile.substr(0, info.downloadFile.find_last_of('\\') + 1);
+            DWORD tick = GetCurrentTime();
+            info.downloadFile += "_temp[";
+            info.downloadFile += std::to_string(tick);
+            info.downloadFile += "].mx";
+        }
+    }
 
     if (bDebug)
-        InitConsoleWindow();
+        mxtoolkit::InitConsoleWindow();
     
     if (info.downloadUrl.empty())
     {

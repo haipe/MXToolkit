@@ -63,6 +63,9 @@
     <ClInclude Include="..\..\..\getopt\mxcmdline.h">
       <Filter>getopt</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\win32\Win32ConsoleWindow.h">
+      <Filter>win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
