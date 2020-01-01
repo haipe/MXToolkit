@@ -180,6 +180,7 @@
     <Image Include="MXStartup.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Release\MXFileManager.exe" />
     <None Include="MXFileManager.exe" />
   </ItemGroup>
   <ItemGroup>

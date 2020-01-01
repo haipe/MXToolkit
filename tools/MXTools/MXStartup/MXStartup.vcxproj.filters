@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="MXFileManager.exe" />
+    <None Include="..\Release\MXFileManager.exe" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="main.xml" />
