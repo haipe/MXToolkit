@@ -6,9 +6,9 @@
             <Control />
             <Button name="Dialog_Title_Area_Close" width="60" height="30" text="关闭" align="center" textcolor="#ffffffff"/>
         </HorizontalLayout>
-        <VerticalLayout bkcolor="#ffffffff" inset="5,60,5,10">
-            <Label name="Dialog_Body_Area_Progress" text="Startup..." height="30" textcolor="#ff252525" align="center" />
-            <Label height="30" width="100" text="60%" textcolor="#fffffff" bkcolor="#ff252525" align="center"/>
+        <VerticalLayout name="Dialog_Body_Area" bkcolor="#ffffffff" inset="5,60,5,10">
+            <Label name="Dialog_Body_Area_Msg" text="Startup..." height="30" textcolor="#ff252525" align="center" />
+            <Label name="Dialog_Body_Area_Progress" height="30" text="60%" textcolor="#fffffff" bkcolor="#ff252525" align="center"/>
         </VerticalLayout>
     </VerticalLayout>
 </Window>

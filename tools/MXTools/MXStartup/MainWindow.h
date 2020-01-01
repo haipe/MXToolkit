@@ -16,8 +16,12 @@ protected:
     virtual void Notify(DuiLib::TNotifyUI& msg) override;
 
 protected:
-    bool getAppCompleted = false;
+    bool getAppCompleted_ = false;
+    unsigned int getProcess_ = 0;
+
+    DuiLib::CVerticalLayoutUI* msgArea_ = nullptr;
     DuiLib::CLabelUI* msgLabel_ = nullptr;
+    DuiLib::CLabelUI* processLabel_ = nullptr;
 
 };
 

@@ -41,12 +41,12 @@ public:
 
     enum MsgType
     {
-        MT_UNZIP_STARTUP_XML,   //解压
-        MT_UNZIP_MXFILE_EXE,   //解压
-        MT_DOWNLOAD_APP_XML,    //下载app.xml
-        MT_DOWNLOAD_APP_EXE,    //下载app.exe
+        MT_UNZIP_STARTUP_XML,       //解压
+        MT_UNZIP_MXFILE_EXE,        //解压
+        MT_DOWNLOAD_APP_XML,        //下载app.xml
+        MT_DOWNLOAD_APP_EXE,        //下载app.exe
         MT_DOWNLOAD_APP_LIBRIRY,    //下载app.所需库
-        MT_RUN_APP,             //运行App
+        MT_RUN_APP,                 //运行App
     };
 
     bool Start(HWND mainWnd);
