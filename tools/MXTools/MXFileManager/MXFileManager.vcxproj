@@ -186,7 +186,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="MXFileManager.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\minizip\Makefile" />

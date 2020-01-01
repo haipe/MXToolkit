@@ -178,7 +178,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="MXStartup.ico" />
-    <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MXFileManager.exe" />
