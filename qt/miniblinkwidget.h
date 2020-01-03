@@ -17,11 +17,12 @@ public:
     virtual ~MiniBlinkWidget() override;
 
     static void wkeInit();
+    static bool isWkeInited();
     static void wkeFinal();
 
     virtual void loadUrl(const QString& url);
 
-    virtual void addHookRequest(const QString& url);
+    virtual unsigned int addHookRequest(const QString& url);
     virtual void removeHookRequest(const QString& url);
 
 signals:
@@ -31,7 +32,7 @@ signals:
     mxtoolkit::MiniBlinkWidget* onCreateWebView(
             wkeNavigationType navType, const QString& url, const wkeWindowFeatures* features);
 
-    void onHookRequest(const QString& url, const QString& request, const QString& respons);
+    void onHookRequest(unsigned int, const QString& url, const QString& request, const QString& respons);
 
 public slots:
 
@@ -59,8 +60,16 @@ protected:
 protected:
     QString request_url;
 
-    QSet<QString> hook_request;
-    QMap<unsigned int,QString> hook_jobs;
+    unsigned int hook_request_base_id;
+
+    QMap<QString,unsigned int> hook_request;
+    struct HookUrlInfo
+    {
+        unsigned int id = 0;
+        QString url;
+    };
+
+    QMap<unsigned int,HookUrlInfo> hook_jobs;
 
     wkeWebView web_view;
 };

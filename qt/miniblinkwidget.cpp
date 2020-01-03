@@ -15,10 +15,16 @@ MiniBlinkWidget::MiniBlinkWidget(QWidget *parent, const QString& url)
     : QWidget(parent)
     , request_url(url)
 {
+    if(!MiniBlinkWidget::isWkeInited())
+        return;
+
+    hook_request_base_id = (unsigned int)this;
     HWND wnd = (HWND)QWidget::winId();
 
     ////wkeCreateWebWindow(WKE_WINDOW_TYPE_TRANSPARENT, NULL, 0, 0, 640, 480);
-    wkeWebView webView = wkeCreateWebWindow(WKE_WINDOW_TYPE_CONTROL, wnd, 0, 0, 640, 480);
+    wkeWebView webView = (wkeCreateWebWindow == nullptr) ?
+                nullptr : wkeCreateWebWindow(WKE_WINDOW_TYPE_CONTROL, wnd, 0, 0, 640, 480);
+
     if (webView)
     {
         wkeOnDocumentReady(webView, MiniBlinkWidget::MiniBlinkWidget::HandleDocumentReady, this);
@@ -47,8 +53,13 @@ MiniBlinkWidget::~MiniBlinkWidget()
 
 void MiniBlinkWidget::wkeInit()
 {
-    if(!wkeIsInitialize || !wkeIsInitialize())
+    if(!isWkeInited())
         ::wkeInitialize();
+}
+
+bool MiniBlinkWidget::isWkeInited()
+{
+    return wkeIsInitialize && wkeIsInitialize();
 }
 
 void MiniBlinkWidget::wkeFinal()
@@ -59,7 +70,6 @@ void MiniBlinkWidget::wkeFinal()
 
 void MiniBlinkWidget::loadUrl(const QString &url)
 {
-
     if(!wkeIsInitialize || !wkeIsInitialize())
         return;
 
@@ -70,9 +80,15 @@ void MiniBlinkWidget::loadUrl(const QString &url)
     wkeLoadURL(web_view,request_url.toStdString().c_str());
 }
 
-void MiniBlinkWidget::addHookRequest(const QString &url)
+unsigned int MiniBlinkWidget::addHookRequest(const QString &url)
 {
-    hook_request.insert(url);
+    QMap<QString, unsigned int>::iterator it = hook_request.find(url);
+    if(it != hook_request.end())
+        return it.value();
+
+    unsigned int id = ++hook_request_base_id;
+    hook_request[url] = id;
+    return id;
 }
 
 void MiniBlinkWidget::removeHookRequest(const QString &url)
@@ -176,14 +192,17 @@ wkeWebView MiniBlinkWidget::onCreateView(wkeNavigationType navType, const QStrin
 
 bool MiniBlinkWidget::onLoadUrlBegin(const QString& url, void *job)
 {
-    for(auto hookUrl : hook_request)
+    QMap<QString, unsigned int>::iterator it = hook_request.begin();
+    while(it != hook_request.end())
     {
-        if (url.indexOf(hookUrl) != -1)
+        if (url.indexOf(it.key()) != -1)
         {
             wkeNetHookRequest(job);
-            hook_jobs[(unsigned int)job] = hookUrl;
+            hook_jobs[(unsigned int)job] = {it.value(),it.key()};
             break;
         }
+
+        it++;
     }
 
     return true;
@@ -191,10 +210,10 @@ bool MiniBlinkWidget::onLoadUrlBegin(const QString& url, void *job)
 
 void MiniBlinkWidget::onLoadUrlEnd(const QString& url, void *job, void *buf, int len)
 {
-    QString hookUrl = hook_jobs[(unsigned int)job];
-    if(hookUrl.isEmpty())
+    HookUrlInfo& hookInfo = hook_jobs[(unsigned int)job];
+    if(hookInfo.id == 0 || hookInfo.url.isEmpty())
         return;
 
-    emit onHookRequest(hookUrl,url,QString((const char*)buf));
+    emit onHookRequest(hookInfo.id, hookInfo.url,url,QString::fromUtf8((const char*)buf,len));
 }
 }
