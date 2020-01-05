@@ -82,6 +82,9 @@ void MiniBlinkWidget::loadUrl(const QString &url)
 
 unsigned int MiniBlinkWidget::addHookRequest(const QString &url)
 {
+    if(url.isEmpty())
+        return 0;
+
     QMap<QString, unsigned int>::iterator it = hook_request.find(url);
     if(it != hook_request.end())
         return it.value();
@@ -93,6 +96,9 @@ unsigned int MiniBlinkWidget::addHookRequest(const QString &url)
 
 void MiniBlinkWidget::removeHookRequest(const QString &url)
 {
+    if(url.isEmpty())
+        return;
+
     hook_request.remove(url);
 }
 
