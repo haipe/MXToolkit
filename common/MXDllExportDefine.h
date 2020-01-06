@@ -53,6 +53,13 @@ typedef mx_call_result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mx_dll_all_export))(mx
 //获取接口
 typedef mx_call_result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mx_dll_get_interface))(const mx_export_interface_info*, void**);
 
+struct mx_dll_export
+{
+    MX_DLL_FUNCTION_TYPE(mx_dll_init) mx_dll_init = nullptr;
+    MX_DLL_FUNCTION_TYPE(mx_dll_uninit) mx_dll_uninit = nullptr;
+    MX_DLL_FUNCTION_TYPE(mx_dll_all_export) mx_dll_all_export = nullptr;
+    MX_DLL_FUNCTION_TYPE(mx_dll_get_interface) mx_dll_get_interface = nullptr;
+};
 
 #if defined(__cplusplus)
     } //extern "C" 

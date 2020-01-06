@@ -21,6 +21,7 @@ namespace mxwebrequest
         uint32 AddWebRequestTask(const Request &requestParam, IRespondNotify *pNotify);
 
         static void CALLBACK TaskCallBack(uint32 msg, uint32 param, mxtoolkit::autoBit reserve1, mxtoolkit::autoBit reserve2, mxtoolkit::autoBit userData);
+
     protected:
         uint32 CallBackHandle(uint32 msg, uint32 param, mxtoolkit::autoBit reserver1, mxtoolkit::autoBit reserve2);
 

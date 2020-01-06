@@ -52,7 +52,7 @@ HRESULT MainWindow::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL* bHa
             getProcess_ += 5;
             msg = L"正在下载 app";
         }break;
-        case GetApp::MT_DOWNLOAD_APP_LIBRIRY:    //下载app.所需库
+        case GetApp::MT_DOWNLOAD_APP_LIBRARY:    //下载app.所需库
         {
             if(getProcess_ <= 95)
                 getProcess_ += 4;

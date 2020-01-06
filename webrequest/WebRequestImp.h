@@ -1,6 +1,7 @@
 ﻿
 #pragma once
 
+#include "MXDllExportDefine.h"
 
 #include "IWebRequest.h"
 #include "AsynRequestManager.h"
@@ -44,11 +45,19 @@ namespace mxwebrequest
         //卸载
         mxtoolkit::Result Uninstall() override;
 
+    public:
+        void GetExportInterfaceInfo(mxtoolkit::mx_export_interface_info* info)
+        {
+            info->name = m_export_info.name;
+            info->version = m_export_info.version;
+        }
+
     protected:
         void CleanTagRequestHeader(RequestHeader* requestHeader);
         void CleanTagProxy(Proxy* proxy);
 
     protected:
+        mxtoolkit::mx_export_interface_info m_export_info;
 
         SynRequestManager    *m_synRequestManager = nullptr;
         AsynRequestManager   *m_asynRequestManager = nullptr;

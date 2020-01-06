@@ -71,9 +71,6 @@
     <ClCompile Include="..\HostResolveManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\MXWebRequest.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\RequestTask.cpp">
       <Filter>源文件</Filter>
     </ClCompile>

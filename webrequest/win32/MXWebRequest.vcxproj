@@ -23,7 +23,6 @@
     <ClCompile Include="..\AsynRequestManager.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
     <ClCompile Include="..\HostResolveManager.cpp" />
-    <ClCompile Include="..\MXWebRequest.cpp" />
     <ClCompile Include="..\RequestTask.cpp" />
     <ClCompile Include="..\stdafx.cpp" />
     <ClCompile Include="..\SynRequestManager.cpp" />
@@ -105,6 +104,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetName>$(ProjectName)D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -131,6 +131,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)..\..\libcurl\lib;C:\Program Files (x86)\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+copy /Y $(OutputPath)$(TargetName).dll $(ProjectDir)..\bin\win32\$(TargetName).dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -149,6 +153,10 @@
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
+    <PostBuildEvent>
+      <Command>
+copy /Y $(OutputPath)$(TargetName).dll $(ProjectDir)..\bin\win32\$(TargetName).dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

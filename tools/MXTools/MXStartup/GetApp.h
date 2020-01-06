@@ -45,7 +45,7 @@ public:
         MT_UNZIP_MXFILE_EXE,        //解压
         MT_DOWNLOAD_APP_XML,        //下载app.xml
         MT_DOWNLOAD_APP_EXE,        //下载app.exe
-        MT_DOWNLOAD_APP_LIBRIRY,    //下载app.所需库
+        MT_DOWNLOAD_APP_LIBRARY,    //下载app.所需库
         MT_RUN_APP,                 //运行App
     };
 

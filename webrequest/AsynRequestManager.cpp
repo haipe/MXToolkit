@@ -64,11 +64,11 @@ namespace mxwebrequest
             {
                 if (taskInfo.second.notifyMode == mxtoolkit::BaseNotify::MODE_CALLBACK && taskInfo.second.CallbackMode.callback)
                 {
-                    ((WEBREQUSET_CALLBACK)taskInfo.second.CallbackMode.callback)(
+                    ((mxtoolkit::MX_BASE_CALLBACK)taskInfo.second.CallbackMode.callback)(
                         taskInfo.second.CallbackMode.msgID,
                         MAKEWPARAM(notifyID, 0),
                         reserve1,
-                        reserve2,
+                        //reserve2,
                         taskInfo.second.CallbackMode.userData);
                 }
             }
@@ -90,11 +90,11 @@ namespace mxwebrequest
                             nSize = 0;
                     }
 
-                    ((WEBREQUSET_CALLBACK)taskInfo.second.CallbackMode.callback)(
+                    ((mxtoolkit::MX_BASE_CALLBACK)taskInfo.second.CallbackMode.callback)(
                         taskInfo.second.CallbackMode.msgID,
                         MAKEWPARAM(notifyID, retCode),
                         (LPARAM)pData,
-                        nSize,
+                        //nSize,
                         taskInfo.second.CallbackMode.userData);
                 }
             }

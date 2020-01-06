@@ -262,7 +262,7 @@ void GetApp::GetAppProcessor()
         for (auto item : appRemoteFile.files)
         {
             std::string * name = new std::string(item.fileName);
-            ::PostMessage(mainWnd_, MSG_GET_APP, MT_DOWNLOAD_APP_LIBRIRY, (LPARAM)name);
+            ::PostMessage(mainWnd_, MSG_GET_APP, MT_DOWNLOAD_APP_LIBRARY, (LPARAM)name);
             std::string fileDownloadPath = baseDir + item.fileName;
 
             fileParam.clear();

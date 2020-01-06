@@ -12,7 +12,7 @@ namespace mxtoolkit
         autoBit	userData;
     };
 
-    typedef uint32(CALLBACK* MXBASECALLBACK)(uint32 msg, uint32 param, autoBit reserve, autoBit userData);
+    typedef uint32(CALLBACK* MX_BASE_CALLBACK)(uint32 msg, uint32 param, autoBit reserve, autoBit userData);
 
     //消息通知方式定义
     struct BaseNotify
