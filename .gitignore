@@ -42,5 +42,6 @@ src/ipch/
 *.Release
 gumbo/qt/Makefile
 *.stash
+vc140.pdb
 
  

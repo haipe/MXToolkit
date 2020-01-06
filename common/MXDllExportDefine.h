@@ -32,15 +32,15 @@ const mx_call_result mx_call_fail = 1;			//调用失败
 
 struct mx_export_interface_info
 {
-    char* name = nullptr;     //
-    char* version = nullptr;  //版本
+    const char* name = nullptr;     //
+    const char* version = nullptr;  //版本
 };
 
 struct mx_dll_export_info
 {
-	char* version = nullptr;
+	const char* version = nullptr;
 	unsigned int interface_count = 0;
-	mx_export_interface_info* interface_info = nullptr;
+	const mx_export_interface_info* interface_info = nullptr;
 };
 
 

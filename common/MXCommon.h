@@ -1,20 +1,31 @@
 ﻿#pragma once
 
+#if defined(_WIN64)
+#define _MX_WIN 64
+#define _MX_64  1
+
+#elif defined(_WIN32)
+#define _MX_WIN 32
+#define _MX_64  0
+
+#endif
+
+#if defined(_MX_WIN)
 #include <windows.h>
 #include <tchar.h>
 #include <string>
 
-#ifndef WIN32
-#include <sys/types.h>
-#else
 #pragma warning(disable:4996)
+#else
+#include <sys/types.h>
+
 #endif
 
 
 
 
 /////////////////////////////////位操作
-#ifndef WIN32
+#ifndef _MX_WIN
 
 #define DWORD_PTR DWORD
 
@@ -39,7 +50,7 @@
 ////////////////////////////////文件系统相关
 
 
-#ifdef WIN32
+#ifdef _MX_WIN
 #define _MX_DIR_CHAR_A		'\\'
 #define _MX_DIR_CHAR_W		L'\\'
 
@@ -63,17 +74,25 @@ namespace mxtoolkit
     typedef unsigned short		uint16;
     typedef int					int32;
     typedef unsigned int		uint32;
-#ifdef WIN32
+
+#ifdef _MX_WIN
     typedef __int64				int64;
     typedef unsigned __int64	uint64;
 #else
-#include <sys/types.h>
     typedef int64_t				int64;
     typedef u_int64_t			uint64;
 #endif
-
     typedef std::wstring WString;
     typedef std::string AString;
+
+#if _MX_64
+    typedef uint64 autoBit;
+
+#else
+    typedef uint32 autoBit;
+
+#endif
+
 
 #ifdef UNICODE
     typedef WString TString;
@@ -100,3 +119,22 @@ namespace mxtoolkit
 #define _MX_MAX_URL				256		//URL长度
 #define _MX_MAX_SERVER_ADDR		512		//服务器地址长度
 
+
+namespace mxtoolkit
+{
+    struct Result
+    {
+        enum
+        {
+            TRUE_ = 0,
+            FALSE_ = 1,
+            FAIL_ = -1
+        };
+
+        int value = FAIL_;
+
+        Result(bool r = false) : value(r ? TRUE_ : FALSE_) {}
+        Result(int r) : value(r == 0 ? TRUE_ : r == 1 ? FALSE_ : FAIL_) {}
+        operator bool() { return value == TRUE_ ? true : false; }
+    };
+}
