@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\common\MXPath.cpp" />
     <ClCompile Include="..\AsynRequestExManager.cpp" />
     <ClCompile Include="..\AsynRequestManager.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
@@ -30,6 +31,7 @@
     <ClCompile Include="RequestOperateImp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\common\MXPath.h" />
     <ClInclude Include="..\AsynRequestExManager.h" />
     <ClInclude Include="..\AsynRequestManager.h" />
     <ClInclude Include="..\HostResolveManager.h" />
@@ -121,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB=1;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;MXNET_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\libcurl\include\;$(ProjectDir)..\..\win32\;$(ProjectDir)..\..\common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\spdlog-1.4.2\include\;$(ProjectDir)..\..\libcurl\include\;$(ProjectDir)..\..\win32\;$(ProjectDir)..\..\common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -143,7 +145,7 @@ copy /Y $(OutputPath)$(TargetName).dll $(ProjectDir)..\bin\win32\$(TargetName).d
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>CURL_STATICLIB=1;_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;MXNET_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\libcurl\include\;$(ProjectDir)..\..\win32\;$(ProjectDir)..\..\common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\spdlog-1.4.2\include\;$(ProjectDir)..\..\libcurl\include\;$(ProjectDir)..\..\win32\;$(ProjectDir)..\..\common\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>

@@ -28,7 +28,7 @@ namespace mxtoolkit
         {
             std::unique_lock<std::mutex> lock(m_mutex);
             bool bTimeout = false;
-            while (m_count == 0) 
+            if (m_count == 0) 
             {
                 // we may have spurious wakeup!
                 //m_cv_uptr.wait(lock);

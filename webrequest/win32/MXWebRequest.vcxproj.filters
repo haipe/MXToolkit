@@ -16,6 +16,9 @@
     <Filter Include="win32">
       <UniqueIdentifier>{646c85fe-25c4-471c-99d1-469bf29d1aa9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="common">
+      <UniqueIdentifier>{04ecb5fc-d506-4082-91c5-6c491930be66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\AsynRequestExManager.h">
@@ -57,6 +60,9 @@
     <ClInclude Include="..\WebRequestDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\common\MXPath.h">
+      <Filter>common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AsynRequestExManager.cpp">
@@ -85,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="RequestOperateImp.cpp">
       <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\common\MXPath.cpp">
+      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

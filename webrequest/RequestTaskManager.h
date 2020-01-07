@@ -26,8 +26,11 @@ namespace mxwebrequest
         {
             StartThread();
         };
+
         virtual ~RequestTaskManager(void)
         {
+            m_msgQueue.PushMsg(nullptr);
+
             StopThread();
 
             if (!m_tasks.empty())
@@ -44,7 +47,14 @@ namespace mxwebrequest
                 m_tasks.clear();
             }
         };
+        
+    public:
+        virtual void StopThread()
+        {
+            m_msgQueue.PushMsg(nullptr);
 
+            mxtoolkit::MXThread::StopThread();
+        }
     protected:
 
         bool AddTaskToContainer(const _TaskKey &key, const _Value_Type &value)
@@ -107,9 +117,11 @@ namespace mxwebrequest
     protected:
         uint32 ThreadProcEx()
         {
+            mxtoolkit::uint64 cnt = 0;
             while (!m_isStop)
             {
-                mxtoolkit::BaseMsg *pMsg = m_msgQueue.PopMsg(50);
+                cnt++;
+                mxtoolkit::BaseMsg *pMsg = m_msgQueue.PopMsg(-1);
                 if (pMsg)
                 {
                     if (pMsg->message == REQUEST_COMPLETE_NOTIFY)

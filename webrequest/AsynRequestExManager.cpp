@@ -1,6 +1,8 @@
 ﻿#include "stdafx.h"
 #include "AsynRequestExManager.h"
 #include "MXCommon.h"
+#include "MXSpdlog.h"
+
 
 namespace mxwebrequest
 {
@@ -43,6 +45,7 @@ namespace mxwebrequest
             return 0;
 
         AddTaskToContainer(pTask->m_nTaskID, std::make_pair(pTask, pNotify));
+        MX_INFO("AddWebRequestTask [{}],host:{}", pTask->m_nTaskID, requestParam.request_host);
 
         pTask->SetNotify(m_notifyIn);
         pTask->SetMsg(&m_msgAllocator, &m_msgQueue);

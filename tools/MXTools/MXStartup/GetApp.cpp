@@ -223,6 +223,30 @@ void GetApp::GetAppProcessor()
                         xmlFree(attrValue);
                     }
 
+                    attrValue = xmlGetProp(fileNode, BAD_CAST("compress"));
+                    if (attrValue)
+                    {
+                        file.compress = strcmp("true", (const char*)attrValue) == 0;
+                        xmlFree(attrValue);
+                    }
+
+                    attrValue = xmlGetProp(fileNode, BAD_CAST("issuance"));
+                    if (attrValue)
+                    {
+                        if (strcmp("beta", (const char*)attrValue) == 0)
+                            file.issuance = AppFile::beta;
+                        else if (strcmp("trial", (const char*)attrValue) == 0)
+                            file.issuance = AppFile::trial;
+                        else if (strcmp("release", (const char*)attrValue) == 0)
+                            file.issuance = AppFile::release;
+                        else if (strcmp("registered", (const char*)attrValue) == 0)
+                            file.issuance = AppFile::registered;
+                        else;// (strcmp("alpha", (const char*)attrValue) == 0)
+                            file.issuance = AppFile::alpha;
+
+                        xmlFree(attrValue);
+                    }
+
                     appRemoteFile.files.emplace_back(file);
                 }
 
@@ -267,7 +291,9 @@ void GetApp::GetAppProcessor()
 
             fileParam.clear();
             //fileParam += "-d true";
-            fileParam += " -c true";
+            if(item.compress)
+                fileParam += " -c true";
+
             fileParam += (" -u " + appInfo.appHosts[0] + item.library + "/" + item.libraryVersion + "/" + item.fileName);
             //fileParam += (" -m " + item.fileMD5);
             fileParam += (" -l " + fileDownloadPath);

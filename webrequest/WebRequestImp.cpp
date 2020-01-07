@@ -3,11 +3,15 @@
 
 #include "stdafx.h"
 #include "WebRequestImp.h"
-#include "RequestTask.h"
-#include "HostResolveManager.h"
+
 #ifdef _MX_WIN
 #include <curl.h>
 #endif
+
+#include "RequestTask.h"
+#include "HostResolveManager.h"
+#include "MXSpdlog.h"
+
 
 namespace mxwebrequest
 {
@@ -34,7 +38,7 @@ namespace mxwebrequest
     {
         if (!m_bInited)
         {
-#if defined(_FS_OS_WIN)
+#if defined(_MX_WIN)
             /*
             CURL_GLOBAL_ALL                //初始化所有的可能的调用。
             CURL_GLOBAL_SSL               //初始化支持 安全套接字层。
@@ -135,8 +139,8 @@ namespace mxwebrequest
 
     mxtoolkit::Result WebRequestImp::SetHostResolve(const char* host, unsigned int port, const char* ip)
     {
-        //if (host && ip)
-        //    ;// ("WebRequestImp::SetHostResolve host:%s resolve to:%s:%d.\n", host, ip, port);
+        if (host && ip)
+            MX_INFO("WebRequestImp::SetHostResolve host:{} resolve to:{}:{}.", host, ip, port);
 
         HostResolveManager::GetInstance()->AddHostResolve(host, port, ip);
 
@@ -161,7 +165,7 @@ namespace mxwebrequest
             if (pDestHeader && pSourceHeader && pSourceHeader->len)
             {
 #ifdef _DEBUG_CURL
-                FMC_LOG("header %d:%s\n", i, pSourceHeader->data);
+                MX_INFO("header {}:{}", i, pSourceHeader->data);
 #endif
 
                 pDestHeader->data = new char[pSourceHeader->len + 1];
@@ -276,7 +280,7 @@ namespace mxwebrequest
                 m_asynRequestExManager = nullptr;
             }
 
-#if defined(_FS_OS_WIN)
+#if defined(_MX_WIN)
             curl_global_cleanup();
 #endif
             m_bInited = false;

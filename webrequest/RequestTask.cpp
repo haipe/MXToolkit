@@ -1,12 +1,11 @@
 ﻿#include "stdafx.h"
 #include "RequestTask.h"
 #include "RequestOperate.h"
-
 #include "RequestOperateImp.h"
-
 #include "HostResolveManager.h"
 
 #include "MXLock.h"
+#include "MXSpdlog.h"
 
 #define REQUEST_PROTOCOL_HTTPS  "https"
 #define REQUEST_PROTOCOL_HTTP   "http"
@@ -159,7 +158,8 @@ namespace mxwebrequest
 
     void RequestTask::SetMsg(mxtoolkit::MXElementAllocator<mxtoolkit::BaseMsg> *pMsgAllocator, mxtoolkit::MXMsgQueue<mxtoolkit::BaseMsg> *pMsgQueue)
     {
-        m_pMsgAllocator = pMsgAllocator; m_pMsgQueue = pMsgQueue;
+        m_msgAllocator = pMsgAllocator;
+        m_msgQueue = pMsgQueue;
     }
 
     void RequestTask::Header_Respond_Data(const char *ptr, size_t size)
@@ -199,6 +199,7 @@ namespace mxwebrequest
 
     uint32 RequestTask::ThreadProcEx()
     {
+        MX_INFO("RequestTask Excute[{}] ", m_nTaskID);
         do
         {
             VerifyUrlResolveUtil verifyUtil(m_requestInfo.request_host);
@@ -220,7 +221,7 @@ namespace mxwebrequest
 
                 if (m_isStop)
                     break;
-#if defined(_FS_OS_WIN)
+#if defined(_MX_WIN)
                 //失败后重试，直到遍历完定向IP
                 if (m_retCode != 0 && verifyUtil.HasResolveLink()) //loopNumber <= FAIL_LOOP_NUMBER && 
 #else
@@ -228,8 +229,7 @@ namespace mxwebrequest
                 if (m_retCode != 0 && loopNumber <= FAIL_LOOP_NUMBER)
 #endif
                 {
-                    ;// ("Rquest[%d] Failed! Failed Count:%d! ErrorInfo:%s.\n", m_nTaskID, loopNumber, m_pRequestOperate->m_pError);
-                    printf("Rquest[%d] Failed! Failed Count:%d! ErrorInfo:%s.\n", m_nTaskID, loopNumber, m_pRequestOperate->m_pError ? "1" : "2");
+                    MX_INFO("Rquest[{}] Failed! Failed Count:{}! ErrorInfo:{}.", m_nTaskID, loopNumber, m_pRequestOperate->m_pError);
 
                     m_pRequestOperate->Done();
 
@@ -239,11 +239,8 @@ namespace mxwebrequest
                 //失败了重置定向IP
                 verifyUtil.ResetUrlResolve();
 
-                ;// ("Request[%d] retCode:%d.\n", m_nTaskID, m_retCode);
-                printf("Request[%d] host:%s. param:%s. retCode:%d.\n",
-                    m_nTaskID,
-                    m_requestInfo.request_host, m_requestInfo.request_param ? m_requestInfo.request_param : nullptr, m_retCode);
-#if defined(_FS_OS_IOS) || defined(_FS_OS_MAC)
+                MX_INFO("Request[{}] retCode:{}.", m_nTaskID, m_retCode);
+#if defined(_MX_IOS) || defined(_MX_MAC)
                 if (m_retCode == 9999)
                 {
                     //exception error
@@ -287,20 +284,20 @@ namespace mxwebrequest
             if (m_isStop)
                 break;
 
-            if (m_pMsgAllocator && m_pMsgQueue)
+            if (m_msgAllocator && m_msgQueue)
             {
-                mxtoolkit::BaseMsg *pMsg = m_pMsgAllocator->Alloc();
+                mxtoolkit::BaseMsg *pMsg = m_msgAllocator->Alloc();
 
                 if (pMsg)
                 {
                     pMsg->message = REQUEST_COMPLETE_NOTIFY;
                     pMsg->param = m_nTaskID;
 
-                    m_pMsgQueue->PushMsg(pMsg);
+                    m_msgQueue->PushMsg(pMsg);
                 }
             }
 
-            ;// ("Request[%d] Over!\n", m_nTaskID);
+            MX_INFO("Request[{}] Over!", m_nTaskID);
 
     } while (0);
 

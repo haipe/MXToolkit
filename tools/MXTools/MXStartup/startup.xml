@@ -2,5 +2,5 @@
 <root>
     <Host>https://moooxin.gitee.io/MXApps/</Host>
     <Host>https://haipe.github.io/MXApps/</Host>
-    <App version="1.0.0.0" file="MXWasai.exe">mxwasai</App>
+    <App version="1.0.0.202001071800" file="MXWasai.exe">mxwasai</App>
 <root>

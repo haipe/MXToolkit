@@ -5,9 +5,14 @@
 #include "WebRequestImp.h"
 #include "MXLock.h"
 
-#include <curl.h>
+#include "MXPath.h"
 
+#include "MXSpdlog.h"
+
+#include <curl.h>
 #pragma comment(lib,"libcurl.lib")
+
+HMODULE g_hModule;
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
@@ -17,6 +22,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
+        g_hModule = hModule;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
@@ -25,6 +31,11 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     return TRUE;
 }
 
+//声明一个日志
+namespace mxtoolkit
+{
+    std::shared_ptr<spdlog::logger> static_spdlog = nullptr;
+}
 
 //导出接口对象接口定义
 namespace mxwebrequest
@@ -38,6 +49,20 @@ namespace mxwebrequest
     MX_C_EXPORT mxtoolkit::mx_call_result mx_dll_init()
     {
         mxtoolkit::MXAutoLock aLock(export_function_mutex);
+
+        if (dll_export_info.version && dll_export_info.interface_info)
+            return mxtoolkit::mx_call_successed;
+
+        CHAR szFileName[MAX_PATH] = { 0 };
+        GetModuleFileNameA(NULL, szFileName, MAX_PATH);
+        std::string fileDir;
+        mxtoolkit::Path::GetFilePathInfo(szFileName, &fileDir, nullptr);
+        fileDir += "\\log";
+        CreateDirectoryA(fileDir.c_str(), NULL);
+        fileDir += mxtoolkit::CurrentTimeString<std::string>("\\%Y-%m-%d\\");
+        CreateDirectoryA(fileDir.c_str(), NULL);
+
+        MX_INIT_LOG(fileDir, "MXWebRequest");
 
         mxtoolkit::mx_export_interface_info info;
         WebRequestImp::GetInstance()->GetExportInterfaceInfo(&info);
@@ -55,6 +80,9 @@ namespace mxwebrequest
         mxtoolkit::MXAutoLock aLock(export_function_mutex);
 
         WebRequestImp::GetInstance()->Uninstall();
+        WebRequestImp::DestroyInstance();
+
+        MX_RELEASE_LOG();
     }
 
     MX_C_EXPORT unsigned int mx_dll_all_export(mxtoolkit::mx_dll_export_info **exp)

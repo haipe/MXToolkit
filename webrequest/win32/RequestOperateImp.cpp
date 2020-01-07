@@ -4,6 +4,7 @@
 #include <atomic>
 
 #include "MXCommon.h"
+#include "MXSpdlog.h"
 
 #include "HostResolveManager.h"
 
@@ -60,7 +61,7 @@ namespace mxwebrequest
                     !url.empty() &&
                     HostResolveManager::GetInstance()->CheckUrlResolve(url, resolve) && !resolve.empty())
                 {
-                    //("Request[%d] Need Resolve:%s to -> %s\n", taskID, url.c_str(), resolve.c_str());
+                    MX_INFO("Request[{}] Need Resolve:{} to -> {}", taskID, url.c_str(), resolve.c_str());
                     hostResolve = curl_slist_append(nullptr, resolve.c_str());
                     curl_easy_setopt(curl, CURLOPT_RESOLVE, hostResolve);
                 }
@@ -138,10 +139,7 @@ namespace mxwebrequest
             m_pRequstParam->request_proxy->proxy_password != nullptr)
         {
             CHAR szTemp[MAX_PATH] = { 0 };
-            snprintf(
-                szTemp,
-                MAX_PATH,
-                "%s:%s", m_pRequstParam->request_proxy->proxy_username, m_pRequstParam->request_proxy->proxy_password);
+            snprintf(szTemp, MAX_PATH, "%s:%s", m_pRequstParam->request_proxy->proxy_username, m_pRequstParam->request_proxy->proxy_password);
 
             curl_easy_setopt(m_pCurl, CURLOPT_PROXYUSERPWD, szTemp);
         }
@@ -158,7 +156,7 @@ namespace mxwebrequest
         {
             for (int i = 0; i < m_pRequstParam->request_headers->header_count; i++)
             {
-                ;// ("Request[%d] Header Param:%s\n", m_nTaskID, m_pRequstParam->request_headers->headers[i].data);
+                MX_INFO("Request[{}] Header Param:{}", m_nTaskID, m_pRequstParam->request_headers->headers[i].data);
 
                 headers = curl_slist_append(headers, m_pRequstParam->request_headers->headers[i].data);
             }
@@ -176,7 +174,7 @@ namespace mxwebrequest
 
         if (m_pRequstParam->request_host != nullptr)
         {
-            //("Request[%d] Host Param:%s\n", m_nTaskID, m_pRequstParam->request_host);
+            MX_INFO("Request[{}] Host Param:{}", m_nTaskID, m_pRequstParam->request_host);
 
             curl_easy_setopt(m_pCurl, CURLOPT_URL, m_pRequstParam->request_host);
         }
@@ -184,11 +182,11 @@ namespace mxwebrequest
         //增加预设的 DNS解析地址，避免DNS无法解析域名 loki 2018-11-20
         curl_easy_setopt(m_pCurl, CURLOPT_DNS_SERVERS, s_defaultDNSIP.c_str());
 
-        //("Request[%d] Type Param:%d\n", m_nTaskID, m_pRequstParam->request_type);
+        MX_INFO("Request[{}] Type Param:{}", m_nTaskID, m_pRequstParam->request_type);
         if (m_pRequstParam->request_param != 0)
-            ;// ("Request[%d] Post Param:%s\n", m_nTaskID, m_pRequstParam->request_param);
+            MX_INFO("Request[{}] Post Param:{}", m_nTaskID, m_pRequstParam->request_param);
         else
-            ;// ("Request[%d] Post Param:null\n", m_nTaskID);
+            MX_INFO("Request[{}] Post Param:null", m_nTaskID);
 
         switch (m_pRequstParam->request_type)
         {
@@ -246,7 +244,7 @@ namespace mxwebrequest
 
         if (m_pRequstParam->timeout != 0)
         {
-            ;// ("Request[%d] Param TimeOut:%d\n", m_nTaskID, m_pRequstParam->timeout);
+            MX_INFO("Request[{}] Param TimeOut:{}", m_nTaskID, m_pRequstParam->timeout);
             curl_easy_setopt(m_pCurl, CURLOPT_CONNECTTIMEOUT, m_pRequstParam->timeout);
             //curl_easy_setopt( m_pCurl, CURLOPT_TIMEOUT_MS, m_pRequstParam->timeout );   //毫秒
             //curl_easy_setopt( m_pCurl, CURLOPT_CONNECTTIMEOUT, m_pRequstParam->timeout );
@@ -308,7 +306,7 @@ namespace mxwebrequest
 
             uint32 retCode = curl_easy_perform(m_pCurl);
 
-            ;// ("Request[%d] retCode:%ld.\n", m_nTaskID, retCode);
+            MX_INFO("Request[{}] retCode:{}.", m_nTaskID, retCode);
             /*
             CURLE_OK    任务完成一切都好
             CURLE_UNSUPPORTED_PROTOCOL  不支持的协议，由URL的头部指定
@@ -328,20 +326,20 @@ namespace mxwebrequest
                 /* check for bytes downloaded */
                 retCode = curl_easy_getinfo(m_pCurl, CURLINFO_SIZE_DOWNLOAD, &val);
                 if ((CURLE_OK == retCode) && (val > 0))
-                    FMC_LOG("Data downloaded: %0.0f bytes.\n", val);
+                    MX_INFO("Data downloaded: {} bytes.", val);
 
                 /* check for total download time */
                 retCode = curl_easy_getinfo(m_pCurl, CURLINFO_TOTAL_TIME, &val);
                 if ((CURLE_OK == retCode) && (val > 0))
-                    FMC_LOG("Total download time: %0.3f sec.\n", val);
+                    MX_INFO("Total download time: {} sec.", val);
 
                 /* check for average download speed */
                 retCode = curl_easy_getinfo(m_pCurl, CURLINFO_SPEED_DOWNLOAD, &val);
                 if ((CURLE_OK == retCode) && (val > 0))
-                    FMC_LOG("Average download speed: %0.3f kbyte/sec.\n", val / 1024);
-                FMC_LOG("Request[%d] Success :%s\n", m_nTaskID, m_szbuffer.c_str());
+                    MX_INFO("Average download speed: {} kbyte/sec.", val / 1024);
+                MX_INFO("Request[{}] Success :{}", m_nTaskID, m_szbuffer.c_str());
 #endif
-                ;//("Request[%d] Success :%s\n", m_nTaskID, &m_respondBuffer[0]);
+                MX_INFO("Request[{}] Success :{}", m_nTaskID, &m_respondBuffer[0]);
             }
 
             return retCode;

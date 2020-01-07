@@ -30,10 +30,12 @@ public:
         m_msgCount(0),
         m_headElement(0),
         m_tailElement(0),
-        m_sem(maxMsgCount),
+        m_sem(0),
         m_elementAllocator(NULL)
     {
         m_pMsg = new T*[maxMsgCount + 1];
+        memset(m_pMsg, 0, sizeof(T*)*(maxMsgCount + 1));
+
 #ifdef _MX_WIN
         m_evStop = CreateEvent(NULL, TRUE, FALSE, NULL);
 #endif
@@ -81,6 +83,7 @@ public:
 
         return TRUE;
     }
+
     T*	PopMsg(uint32 dwWaitTime = INFINITE, uint32 *pdwMsgCount = NULL)
     {
         if (m_wasStop)

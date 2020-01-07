@@ -12,6 +12,17 @@ struct StartupAppInfo
 
 struct AppFile
 {
+    bool compress = false;
+    enum Issuance
+    {
+        alpha,      //内测，不稳定
+        beta,       //公测，不稳定
+        trial,      //公测试用，稳定
+        release,    //正式发布
+        registered, //需要注册版本
+    };
+
+    Issuance issuance = alpha;
     std::string library;
     std::string libraryVersion;
     std::string fileMD5;

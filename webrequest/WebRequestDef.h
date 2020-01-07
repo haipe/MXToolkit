@@ -151,9 +151,9 @@ namespace mxwebrequest
 
 	interface IRespondNotify
 	{
-		virtual void OnHeaderRespond(uint32 nID,char *pData,uint32 nSize) = 0;
-		virtual void OnDataRespond(uint32 nID,char *pData,uint32 nSize) = 0;
-		virtual void OnCompleteRespond(uint32 nID,uint32 nCode,char *pData,uint32 nSize) = 0;
+        virtual void OnHeaderRespond(uint32 nID, const char *pData, uint32 nSize) {};
+        virtual void OnDataRespond(uint32 nID, const char *pData, uint32 nSize) {};
+        virtual void OnCompleteRespond(uint32 nID, uint32 nCode, const char *pData, uint32 nSize) {};
 	};
 }
 

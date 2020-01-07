@@ -57,8 +57,8 @@ namespace mxwebrequest
 
         mxtoolkit::BaseNotify m_notify;
 
-        mxtoolkit::MXElementAllocator<mxtoolkit::BaseMsg> *m_pMsgAllocator;
-        mxtoolkit::MXMsgQueue<mxtoolkit::BaseMsg>         *m_pMsgQueue;
+        mxtoolkit::MXElementAllocator<mxtoolkit::BaseMsg> *m_msgAllocator;
+        mxtoolkit::MXMsgQueue<mxtoolkit::BaseMsg>         *m_msgQueue;
     };
 
 
