@@ -27,19 +27,18 @@ MiniBlinkWidget::MiniBlinkWidget(QWidget *parent, const QString& url)
 
     if (webView)
     {
-        wkeOnDocumentReady(webView, MiniBlinkWidget::MiniBlinkWidget::HandleDocumentReady, this);
-        wkeOnTitleChanged(webView, MiniBlinkWidget::HandleTitleChanged, this);
-        wkeOnURLChanged(webView,MiniBlinkWidget::HandleUrlChanged,this);
-        wkeOnCreateView(webView, MiniBlinkWidget::HandleCreateView, this);
-        wkeOnLoadUrlBegin(webView, MiniBlinkWidget::HandleLoadUrlBegin, this);
-        wkeOnLoadUrlEnd(webView, MiniBlinkWidget::HandleLoadUrlEnd, this);
+        wkeOnDocumentReady(webView, MiniBlinkWidget::onHandleDocumentReady, this);
+        wkeOnTitleChanged(webView, MiniBlinkWidget::onHandleTitleChanged, this);
+        wkeOnURLChanged(webView,MiniBlinkWidget::onHandleUrlChanged,this);
+        wkeOnCreateView(webView, MiniBlinkWidget::onHandleCreateView, this);
+        wkeOnLoadUrlBegin(webView, MiniBlinkWidget::onHandleLoadUrlBegin, this);
+        wkeOnLoadUrlEnd(webView, MiniBlinkWidget::onHandleLoadUrlEnd, this);
 
         web_view = webView;
 
         wkeSetCookieEnabled(webView,true);
 
-        if(!request_url.isEmpty())
-            wkeLoadURL(webView,request_url.toStdString().c_str());
+        loadUrl(request_url);
     }
 }
 
@@ -77,6 +76,10 @@ void MiniBlinkWidget::loadUrl(const QString &url)
         return;
 
     request_url = url;
+
+    qDebug() << "MiniBlinkWidget::loadUrl :" << (void*)this;
+    wkeJsBindFunction("onJsCall",MiniBlinkWidget::onHandleJsCall, this, 1);
+
     wkeLoadURL(web_view,request_url.toStdString().c_str());
 }
 
@@ -102,6 +105,14 @@ void MiniBlinkWidget::removeHookRequest(const QString &url)
     hook_request.remove(url);
 }
 
+void MiniBlinkWidget::runJavaScript(const QString &js)
+{
+    if(web_view)
+    {
+        wkeRunJS(web_view, js.toStdString().c_str());
+    }
+}
+
 void MiniBlinkWidget::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
@@ -112,10 +123,8 @@ void MiniBlinkWidget::resizeEvent(QResizeEvent *event)
     }
 }
 
-// 回调：文档加载成功
-void MiniBlinkWidget::HandleDocumentReady(wkeWebView webWindow, void* param)
+void WKE_CALL_TYPE MiniBlinkWidget::onHandleDocumentReady(wkeWebView webWindow, void* param)
 {
-    //qDebug() << "HandleDocumentReady:";
     wkeShowWindow(webWindow, TRUE);
 
     //const utf8* ut = wkeGetSource(webWindow);
@@ -124,44 +133,57 @@ void MiniBlinkWidget::HandleDocumentReady(wkeWebView webWindow, void* param)
     //std::string str(ut);
     //qDebug() << "strlen : "  << strlen(ut) << " len:" << str.length();
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    miniWidget->onDocumentReady();
+    if(miniWidget)
+        miniWidget->onDocumentReady();
 }
 
-// 回调：页面标题改变
-void MiniBlinkWidget::HandleTitleChanged(wkeWebView webWindow, void* param, const wkeString title)
+void WKE_CALL_TYPE MiniBlinkWidget::onHandleTitleChanged(wkeWebView webWindow, void* param, const wkeString title)
 {
     //qDebug() << "HandleTitleChanged:";
     wkeSetWindowTitle(webWindow, wkeGetString(title));
 
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    miniWidget->onTitleChanged("");
+    if(miniWidget)
+        miniWidget->onTitleChanged("");
 }
 
-void MiniBlinkWidget::HandleUrlChanged(wkeWebView webView, void* param, const wkeString url)
+void WKE_CALL_TYPE MiniBlinkWidget::onHandleUrlChanged(wkeWebView webView, void* param, const wkeString url)
 {
     qDebug() << "url change:" << wkeGetString(url);
 
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    miniWidget->onUrlChanged(wkeGetString(url));
+    if(miniWidget)
+        miniWidget->onUrlChanged(wkeGetString(url));
 }
-// 回调：创建新的页面，比如说调用了 window.open 或者点击了 <a target="_blank" .../>
-wkeWebView MiniBlinkWidget::HandleCreateView(
+
+wkeWebView WKE_CALL_TYPE MiniBlinkWidget::onHandleCreateView(
         wkeWebView, void* param, wkeNavigationType navType, const wkeString url, const wkeWindowFeatures* features)
 {
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    return miniWidget->onCreateView(navType,QString(wkeGetString(url)),features);
+    if(miniWidget)
+        return miniWidget->onCreateView(navType,QString(wkeGetString(url)),features);
 }
 
-bool MiniBlinkWidget::HandleLoadUrlBegin(wkeWebView, void* param, const char *url, void *job)
+bool WKE_CALL_TYPE MiniBlinkWidget::onHandleLoadUrlBegin(wkeWebView, void* param, const char *url, void *job)
 {
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    return miniWidget->onLoadUrlBegin(QString(url),job);
+    if(miniWidget)
+        return miniWidget->onLoadUrlBegin(QString(url),job);
 }
 
-void MiniBlinkWidget::HandleLoadUrlEnd(wkeWebView, void* param, const char *url, void *job, void* buf, int len)
+void WKE_CALL_TYPE MiniBlinkWidget::onHandleLoadUrlEnd(wkeWebView, void* param, const char *url, void *job, void* buf, int len)
 {
     MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
-    miniWidget->onLoadUrlEnd(QString(url),job,buf,len);
+    if(miniWidget)
+        miniWidget->onLoadUrlEnd(QString(url),job,buf,len);
+}
+
+jsValue WKE_CALL_TYPE MiniBlinkWidget::onHandleJsCall(const char *name, jsExecState es, void *param)
+{
+    MiniBlinkWidget* miniWidget = static_cast<MiniBlinkWidget*>(param);
+    if(miniWidget)
+        miniWidget->onJavaScritCall(QString(name),es);
+    return 0;
 }
 
 void MiniBlinkWidget::onDocumentReady()
@@ -221,5 +243,14 @@ void MiniBlinkWidget::onLoadUrlEnd(const QString& url, void *job, void *buf, int
         return;
 
     emit onHookRequest(hookInfo.id, hookInfo.url,url,QString::fromUtf8((const char*)buf,len));
+}
+
+void MiniBlinkWidget::onJavaScritCall(const QString &function, jsExecState es)
+{
+    if(function == "onJsCall")
+    {
+        const char *text = jsToString(es, jsArg(es, 0));
+        qDebug() << "onJsCall(" << text <<")";
+    }
 }
 }
