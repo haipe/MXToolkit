@@ -23,7 +23,7 @@ namespace mxtoolkit
 
             std::string filePath = logPath + "\\";
             std::string timeFormat = name + " %H-%M-%S.log";
-            std::string fileName = mxtoolkit::CurrentTimeString<std::string>(timeFormat.c_str());
+            std::string fileName = mxtoolkit::MXTimeDate::ToString<std::string>(timeFormat.c_str());
             filePath += fileName;
 
             return static_spdlog = spdlog::rotating_logger_mt<spdlog::async_factory>(name.c_str(), filePath.c_str(), 1024 * 1024 * 10, 10);

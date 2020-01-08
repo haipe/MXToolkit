@@ -46,10 +46,10 @@ namespace mxwebrequest
         mxtoolkit::Result Uninstall() override;
 
     public:
-        void GetExportInterfaceInfo(mxtoolkit::mx_export_interface_info* info)
+        void GetExportInterfaceInfo(mxtoolkit::MXInterfaceInfo* info)
         {
-            info->name = m_export_info.name;
-            info->version = m_export_info.version;
+            info->name = m_exportInfo.name;
+            info->version = m_exportInfo.version;
         }
 
     protected:
@@ -57,7 +57,7 @@ namespace mxwebrequest
         void CleanTagProxy(Proxy* proxy);
 
     protected:
-        mxtoolkit::mx_export_interface_info m_export_info;
+        mxtoolkit::MXInterfaceInfo m_exportInfo;
 
         SynRequestManager    *m_synRequestManager = nullptr;
         AsynRequestManager   *m_asynRequestManager = nullptr;

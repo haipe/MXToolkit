@@ -51,37 +51,31 @@ int main()
 {
     std::cout << "Hello World!\n";
     
-    mxtoolkit::mx_dll_export mx_dll_function;
 
     mxwebrequest::IWebRequest* webrequest = nullptr;
 
+    mxtoolkit::MXDllObject mxDllObj;
+
 #ifdef _DEBUG
-    HMODULE webrequest_dll = LoadLibraryA("MXWebRequestD.dll");
+    HMODULE webrequest_dll = MXInitDll(mxDllObj, "MXWebRequestD.dll");
 #else
-    HMODULE webrequest_dll = LoadLibraryA("MXWebRequest.dll");
+    HMODULE webrequest_dll = MXInitDll(mxDllObj, "MXWebRequest.dll");
 #endif
-    if (webrequest_dll)
+
+    if (mxDllObj.dllInit)
+        mxDllObj.dllInit();
+
+    mxtoolkit::MXDllExportInfo* all_export = nullptr;
+    if (mxDllObj.getExportInfo)
     {
-        mx_dll_function.mx_dll_init = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mx_dll_init))GetProcAddress(webrequest_dll, "mx_dll_init");
-        mx_dll_function.mx_dll_uninit = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mx_dll_uninit))GetProcAddress(webrequest_dll, "mx_dll_uninit");
-        mx_dll_function.mx_dll_all_export = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mx_dll_all_export))GetProcAddress(webrequest_dll, "mx_dll_all_export");
-        mx_dll_function.mx_dll_get_interface = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mx_dll_get_interface))GetProcAddress(webrequest_dll, "mx_dll_get_interface");
+        mxDllObj.getExportInfo(&all_export);
     }
 
-    if (mx_dll_function.mx_dll_init)
-        mx_dll_function.mx_dll_init();
+    mxtoolkit::MXInterfaceInfo info = *all_export->interfaceInfo;
 
-    mxtoolkit::mx_dll_export_info* all_export = nullptr;
-    if (mx_dll_function.mx_dll_all_export)
+    if (mxDllObj.getInterfaceInfo)
     {
-        mx_dll_function.mx_dll_all_export(&all_export);
-    }
-
-    mxtoolkit::mx_export_interface_info info = *all_export->interface_info;
-
-    if (mx_dll_function.mx_dll_get_interface)
-    {
-        mx_dll_function.mx_dll_get_interface(&info, (void**)&wr);
+        mxDllObj.getInterfaceInfo(&info, (void**)&wr);
     }
 
     WRNotify notify;
@@ -106,9 +100,10 @@ int main()
     wr->Uninstall();
 
     std::cout << "end2222.\n";
-    mx_dll_function.mx_dll_uninit();
-
+    mxDllObj.dllUninit();
+    
     std::cout << "end3333333333333.\n";
+    FreeLibrary(webrequest_dll);
     return 0;
 }
 

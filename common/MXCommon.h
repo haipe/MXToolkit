@@ -122,19 +122,34 @@ namespace mxtoolkit
 
 namespace mxtoolkit
 {
+    enum
+    {
+        MX_SUCCESS = 0,
+        MX_FAIL = 1,
+        MX_ERROR = -1
+    };
+
     struct Result
     {
-        enum
-        {
-            TRUE_ = 0,
-            FALSE_ = 1,
-            FAIL_ = -1
-        };
+        int value;  //默认失败
 
-        int value = FAIL_;
+#if __cplusplus
+        operator bool() const { return value == MX_SUCCESS ? true : false; }
 
-        Result(bool r = false) : value(r ? TRUE_ : FALSE_) {}
-        Result(int r) : value(r == 0 ? TRUE_ : r == 1 ? FALSE_ : FAIL_) {}
-        operator bool() { return value == TRUE_ ? true : false; }
+#endif
     };
+
+#if __cplusplus
+#define RETURN_RESULT(r) return mxtoolkit::ToResult(r)
+
+    template<typename TYPE>
+    Result ToResult(TYPE r)
+    {
+        if(std::is_same<typename std::decay<TYPE>::type, bool>::value)
+            return { r ? MX_SUCCESS : MX_FAIL };
+
+        return { r == 0 ? MX_SUCCESS : r };
+    }
+    
+#endif
 }

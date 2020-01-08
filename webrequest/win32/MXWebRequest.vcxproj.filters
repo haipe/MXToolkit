@@ -60,9 +60,6 @@
     <ClInclude Include="..\WebRequestDef.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\common\MXPath.h">
-      <Filter>common</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AsynRequestExManager.cpp">
@@ -91,9 +88,6 @@
     </ClCompile>
     <ClCompile Include="RequestOperateImp.cpp">
       <Filter>win32</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\common\MXPath.cpp">
-      <Filter>common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

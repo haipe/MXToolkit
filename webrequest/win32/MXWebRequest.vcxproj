@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\MXPath.cpp" />
     <ClCompile Include="..\AsynRequestExManager.cpp" />
     <ClCompile Include="..\AsynRequestManager.cpp" />
     <ClCompile Include="..\dllmain.cpp" />
@@ -31,7 +30,6 @@
     <ClCompile Include="RequestOperateImp.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\MXPath.h" />
     <ClInclude Include="..\AsynRequestExManager.h" />
     <ClInclude Include="..\AsynRequestManager.h" />
     <ClInclude Include="..\HostResolveManager.h" />

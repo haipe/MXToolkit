@@ -241,7 +241,7 @@ void GetApp::GetAppProcessor()
                             file.issuance = AppFile::release;
                         else if (strcmp("registered", (const char*)attrValue) == 0)
                             file.issuance = AppFile::registered;
-                        else;// (strcmp("alpha", (const char*)attrValue) == 0)
+                        else// (strcmp("alpha", (const char*)attrValue) == 0)
                             file.issuance = AppFile::alpha;
 
                         xmlFree(attrValue);

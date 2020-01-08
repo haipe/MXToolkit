@@ -11,6 +11,8 @@
 #include "Win32ConsoleWindow.h"
 #include "Win32PathUtil.h"
 
+#include "MXSpdlog.h"
+
 #pragma comment(lib,"libxml.lib")
 
 #ifdef _DEBUG
@@ -24,6 +26,10 @@
 #include "MainWindow.h"
 #include "GetApp.h"
 
+namespace mxtoolkit
+{
+    std::shared_ptr<spdlog::logger> static_spdlog = nullptr;
+}
 #define MAX_LOADSTRING 100
 // 全局变量:
 HINSTANCE hInst;                                // 当前实例
@@ -45,6 +51,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     mxtoolkit::InitConsoleWindow();
 
 #endif
+
+    std::string logDir(mxtoolkit::Win32App<std::string>::CurrentDirectory());
+    logDir += mxtoolkit::MXTimeDate::ToString<std::string>("\\log\\%Y-%m-%d\\");
+    mxtoolkit::Win32App<std::string>::CreateDirectory(logDir);
+
+    MX_INIT_LOG(logDir, "MXStartup");
 
     hInst = hInstance;
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);

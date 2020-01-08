@@ -5,7 +5,7 @@
 #include "WebRequestImp.h"
 #include "MXLock.h"
 
-#include "MXPath.h"
+#include "Win32PathUtil.h"
 
 #include "MXSpdlog.h"
 
@@ -14,10 +14,10 @@
 
 HMODULE g_hModule;
 
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-                     )
+BOOL APIENTRY DllMain(HMODULE hModule,
+    DWORD  ul_reason_for_call,
+    LPVOID lpReserved
+)
 {
     switch (ul_reason_for_call)
     {
@@ -40,81 +40,77 @@ namespace mxtoolkit
 //导出接口对象接口定义
 namespace mxwebrequest
 {
-    static std::string dll_version = "202001061555";
-    static std::recursive_mutex export_function_mutex;
+    static std::string DLL_VERSION = "202001061555";
+    static std::recursive_mutex EXPORT_FUNCTION_MUTEX;
 
-    static mxtoolkit::mx_dll_export_info dll_export_info;
-    static std::vector<mxtoolkit::mx_export_interface_info> export_interface_list;
+    static mxtoolkit::MXDllExportInfo DLL_EXPORT_INFO;
+    static std::vector<mxtoolkit::MXInterfaceInfo> EXPORT_INTERFACE_LIST;
 
-    MX_C_EXPORT mxtoolkit::mx_call_result mx_dll_init()
+    MX_C_EXPORT mxtoolkit::Result mxDllInit()
     {
-        mxtoolkit::MXAutoLock aLock(export_function_mutex);
+        mxtoolkit::MXAutoLock aLock(EXPORT_FUNCTION_MUTEX);
 
-        if (dll_export_info.version && dll_export_info.interface_info)
-            return mxtoolkit::mx_call_successed;
+        if (DLL_EXPORT_INFO.version && DLL_EXPORT_INFO.interfaceInfo)
+            RETURN_RESULT(true);
 
-        CHAR szFileName[MAX_PATH] = { 0 };
-        GetModuleFileNameA(NULL, szFileName, MAX_PATH);
-        std::string fileDir;
-        mxtoolkit::Path::GetFilePathInfo(szFileName, &fileDir, nullptr);
-        fileDir += "\\log";
-        CreateDirectoryA(fileDir.c_str(), NULL);
-        fileDir += mxtoolkit::CurrentTimeString<std::string>("\\%Y-%m-%d\\");
-        CreateDirectoryA(fileDir.c_str(), NULL);
+        std::string fileDir(mxtoolkit::Win32App<std::string>::GetModuleDirectory(g_hModule));
+        fileDir += mxtoolkit::MXTimeDate::ToString<std::string>("\\log\\%Y-%m-%d\\");
+        mxtoolkit::Win32App<std::string>::CreateDirectory(fileDir);
+
 
         MX_INIT_LOG(fileDir, "MXWebRequest");
 
-        mxtoolkit::mx_export_interface_info info;
+        mxtoolkit::MXInterfaceInfo info;
         WebRequestImp::GetInstance()->GetExportInterfaceInfo(&info);
-        export_interface_list.push_back(info);
+        EXPORT_INTERFACE_LIST.emplace_back(info);
 
-        dll_export_info.interface_count = export_interface_list.size();
-        dll_export_info.version = dll_version.c_str();//当前时间戳
-        dll_export_info.interface_info = &export_interface_list[0];
+        DLL_EXPORT_INFO.interfaceCount = EXPORT_INTERFACE_LIST.size();
+        DLL_EXPORT_INFO.version = DLL_VERSION.c_str();//当前时间戳
+        DLL_EXPORT_INFO.interfaceInfo = &EXPORT_INTERFACE_LIST[0];
 
-        return mxtoolkit::mx_call_successed;
+        RETURN_RESULT(true);
     }
 
-    MX_C_EXPORT void mx_dll_uninit()
+    MX_C_EXPORT mxtoolkit::Result mxDllUninit()
     {
-        mxtoolkit::MXAutoLock aLock(export_function_mutex);
+        mxtoolkit::MXAutoLock aLock(EXPORT_FUNCTION_MUTEX);
 
         WebRequestImp::GetInstance()->Uninstall();
         WebRequestImp::DestroyInstance();
 
         MX_RELEASE_LOG();
+        RETURN_RESULT(true);
     }
 
-    MX_C_EXPORT unsigned int mx_dll_all_export(mxtoolkit::mx_dll_export_info **exp)
+    MX_C_EXPORT mxtoolkit::Result mxGetExportInfo(mxtoolkit::MXDllExportInfo **exp)
     {
-        mxtoolkit::MXAutoLock aLock(export_function_mutex);
+        mxtoolkit::MXAutoLock aLock(EXPORT_FUNCTION_MUTEX);
 
         if (exp)
         {
-            *exp = &dll_export_info;
-            return mxtoolkit::mx_call_successed;
+            *exp = &DLL_EXPORT_INFO;
+            RETURN_RESULT(true);
         }
 
-        return mxtoolkit::mx_call_fail;
+        RETURN_RESULT(false);
     }
 
-    MX_C_EXPORT unsigned int mx_dll_get_interface(const mxtoolkit::mx_export_interface_info* info, void** it)
+    MX_C_EXPORT mxtoolkit::Result mxGetInterfaceInfo(const mxtoolkit::MXInterfaceInfo* info, void** it)
     {
-        mxtoolkit::MXAutoLock aLock(export_function_mutex);
+        mxtoolkit::MXAutoLock aLock(EXPORT_FUNCTION_MUTEX);
 
         if (!info || !info->name || !info->version || !it)
-            return mxtoolkit::mx_call_fail;
+            RETURN_RESULT(false);
 
-
-        for (auto item : export_interface_list)
+        for (auto item : EXPORT_INTERFACE_LIST)
         {
             if (strcmp(item.name, info->name) == 0 && strcmp(item.version, info->version) == 0)
             {
                 *it = (void*)dynamic_cast<IWebRequest*>(WebRequestImp::GetInstance());
-                return mxtoolkit::mx_call_successed;
+                RETURN_RESULT(true);
             }
         }
 
-        return mxtoolkit::mx_call_fail;
+        RETURN_RESULT(false);
     }
 }

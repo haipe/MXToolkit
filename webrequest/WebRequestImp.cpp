@@ -18,8 +18,8 @@ namespace mxwebrequest
 
     WebRequestImp::WebRequestImp()
     {
-        m_export_info.name = "WebRequest";
-        m_export_info.version = "202001061800";
+        m_exportInfo.name = "WebRequest";
+        m_exportInfo.version = "202001061800";
 
         m_defaultRequestHeader.headers = nullptr;
         m_defaultRequestHeader.header_count = 0;
@@ -63,21 +63,21 @@ namespace mxwebrequest
             m_asynRequestExManager->SetNotify(pNotify);
         }
 
-        return true;
+        RETURN_RESULT(true);
     }
 
     mxtoolkit::Result WebRequestImp::SetProxy(const Proxy *pWebRequestProxy)
     {
         if (m_bInited == false)
-            return S_FALSE;
+            RETURN_RESULT(false);;
 
         if (pWebRequestProxy == nullptr)
-            return S_FALSE;
+            RETURN_RESULT(false);
 
         if (pWebRequestProxy->proxy_host == nullptr)
-            return S_FALSE;
+            RETURN_RESULT(false);
 
-        HRESULT hr = S_FALSE;
+        bool ret = false;
         do
         {
             // ------------------- host
@@ -126,15 +126,16 @@ namespace mxwebrequest
 
             m_proxy.proxy_port = pWebRequestProxy->proxy_port;
 
-            hr = S_OK;
+            ret = true;
 
         } while (0);
 
-        if (hr == S_FALSE)
+        if (!ret)
         {
             CleanTagProxy(&m_proxy);
         }
-        return hr;
+
+        RETURN_RESULT(ret);
     }
 
     mxtoolkit::Result WebRequestImp::SetHostResolve(const char* host, unsigned int port, const char* ip)
@@ -144,13 +145,13 @@ namespace mxwebrequest
 
         HostResolveManager::GetInstance()->AddHostResolve(host, port, ip);
 
-        return true;
+        RETURN_RESULT(true);
     }
 
     mxtoolkit::Result WebRequestImp::SetDefaultHeader(RequestHeader *pRequestHeader)
     {
         if (pRequestHeader == nullptr)
-            return false;
+            RETURN_RESULT(false);
 
         CleanTagRequestHeader(&m_defaultRequestHeader);
 
@@ -179,7 +180,7 @@ namespace mxwebrequest
         m_defaultRequestHeader.headers = pDestHeaders;
         m_defaultRequestHeader.header_count = pRequestHeader->header_count;
 
-        return true;
+        RETURN_RESULT(true);
     }
 
     mxtoolkit::uint32 WebRequestImp::SynRequest(Request *pRequest, Respond *pRespond)
@@ -284,11 +285,9 @@ namespace mxwebrequest
             curl_global_cleanup();
 #endif
             m_bInited = false;
-
-            return true;
         }
 
-        return true;
+        RETURN_RESULT(true);
     }
 
     void WebRequestImp::CleanTagRequestHeader(RequestHeader* requestHeader)
