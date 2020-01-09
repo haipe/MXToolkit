@@ -21,7 +21,6 @@ namespace mxtoolkit
             else
                 ss << std::put_time(std::localtime(&t), "%Y-%m-%d %H:%M:%S");
             T sss = ss.str();
-            std::cout << sss;
 
             return sss;
         }

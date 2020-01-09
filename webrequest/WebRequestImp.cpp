@@ -18,9 +18,6 @@ namespace mxwebrequest
 
     WebRequestImp::WebRequestImp()
     {
-        m_exportInfo.name = "WebRequest";
-        m_exportInfo.version = "202001061800";
-
         m_defaultRequestHeader.headers = nullptr;
         m_defaultRequestHeader.header_count = 0;
     }

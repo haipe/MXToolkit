@@ -62,6 +62,7 @@ int main()
     HMODULE webrequest_dll = MXInitDll(mxDllObj, "MXWebRequest.dll");
 #endif
 
+    std::cout << "GetLastError: " << (int)GetLastError << std::endl;
     if (mxDllObj.dllInit)
         mxDllObj.dllInit();
 

@@ -1,28 +1,24 @@
 ﻿// dllmain.cpp : 定义 DLL 应用程序的入口点。
-#include "stdafx.h"
-
+#include "pch.h"
 #include "MXDllExportDefine.h"
-#include "WebRequestImp.h"
 #include "MXLock.h"
 
 #include "Win32PathUtil.h"
 
 #include "MXSpdlog.h"
 
-#include <curl.h>
-#pragma comment(lib,"libcurl.lib")
+#include "MXInterprocessMessage.h"
 
 HMODULE g_hModule;
 
-BOOL APIENTRY DllMain(HMODULE hModule,
-    DWORD  ul_reason_for_call,
-    LPVOID lpReserved
-)
+BOOL APIENTRY DllMain( HMODULE hModule,
+                       DWORD  ul_reason_for_call,
+                       LPVOID lpReserved
+                     )
 {
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        g_hModule = hModule;
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
@@ -31,6 +27,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
     return TRUE;
 }
 
+
 //声明一个日志
 namespace mxtoolkit
 {
@@ -38,7 +35,7 @@ namespace mxtoolkit
 }
 
 //导出接口对象接口定义
-namespace mxwebrequest
+namespace mxtoolkit
 {
     static std::string DLL_VERSION = "202001061555";
     static std::recursive_mutex EXPORT_FUNCTION_MUTEX;
@@ -56,13 +53,11 @@ namespace mxwebrequest
         std::string fileDir(mxtoolkit::Win32App<std::string>::GetModuleDirectory(g_hModule));
         fileDir += mxtoolkit::MXTimeDate::ToString<std::string>("\\log\\%Y-%m-%d\\");
         mxtoolkit::Win32App<std::string>::CreateDirectory(fileDir);
-
-
-        MX_INIT_LOG(fileDir, "MXWebRequest");
         
-        WebRequestImp::GetInstance()->InitInterface(DLL_VERSION.c_str());
-        mxtoolkit::MXInterfaceInfo info = WebRequestImp::GetInstance()->GetInterfaceInfo();
-        EXPORT_INTERFACE_LIST.emplace_back(info);
+        MX_INIT_LOG(fileDir, "MXToolkit");
+
+        MXInterprocessMessage::GetInstance()->InitInterface(DLL_VERSION.c_str());
+        EXPORT_INTERFACE_LIST.emplace_back(MXInterprocessMessage::GetInstance()->GetInterfaceInfo());
 
         DLL_EXPORT_INFO.interfaceCount = EXPORT_INTERFACE_LIST.size();
         DLL_EXPORT_INFO.version = DLL_VERSION.c_str();//当前时间戳
@@ -75,8 +70,6 @@ namespace mxwebrequest
     {
         mxtoolkit::MXAutoLock aLock(EXPORT_FUNCTION_MUTEX);
 
-        WebRequestImp::GetInstance()->Uninstall();
-        WebRequestImp::DestroyInstance();
 
         MX_RELEASE_LOG();
         RETURN_RESULT(true);
@@ -106,7 +99,7 @@ namespace mxwebrequest
         {
             if (strcmp(item.name, info->name) == 0 && strcmp(item.version, info->version) == 0)
             {
-                *it = (void*)dynamic_cast<IWebRequest*>(WebRequestImp::GetInstance());
+                *it = (void*)dynamic_cast<IMXInterprocessMessage*>(MXInterprocessMessage::GetInstance());
                 RETURN_RESULT(true);
             }
         }

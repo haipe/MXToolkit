@@ -14,12 +14,13 @@
 //////////////////////////////////////////////////////////////////////////
 #define MX_CALL_TYPE __cdecl
 
-#define MX_DLL_FUNCTION_TYPE(func) mx##func
+#define MX_DLL_FUNCTION_TYPE(func) _##func##_Type_
 
 #define MX_C_EXPORT extern "C" _declspec(dllexport)
 
 #if defined(__cplusplus)
 namespace mxtoolkit {
+
     extern "C" {
 #endif
         
@@ -39,20 +40,20 @@ struct MXDllExportInfo
 
 
 //初始化
-typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(DllInit))();
+typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mxDllInit))();
 //卸载
-typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(DllUninit))();
+typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mxDllUninit))();
 //获取所有接口信息
-typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(GetExportInfo))(MXDllExportInfo **);
+typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mxGetExportInfo))(MXDllExportInfo **);
 //获取接口
-typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(GetInterfaceInfo))(const MXInterfaceInfo*, void**);
+typedef Result(MX_CALL_TYPE *MX_DLL_FUNCTION_TYPE(mxGetInterfaceInfo))(const MXInterfaceInfo*, void**);
 
 struct MXDllObject
 {
-    MX_DLL_FUNCTION_TYPE(DllInit) dllInit = nullptr;
-    MX_DLL_FUNCTION_TYPE(DllUninit) dllUninit = nullptr;
-    MX_DLL_FUNCTION_TYPE(GetExportInfo) getExportInfo = nullptr;
-    MX_DLL_FUNCTION_TYPE(GetInterfaceInfo) getInterfaceInfo = nullptr;
+    MX_DLL_FUNCTION_TYPE(mxDllInit) dllInit = nullptr;
+    MX_DLL_FUNCTION_TYPE(mxDllUninit) dllUninit = nullptr;
+    MX_DLL_FUNCTION_TYPE(mxGetExportInfo) getExportInfo = nullptr;
+    MX_DLL_FUNCTION_TYPE(mxGetInterfaceInfo) getInterfaceInfo = nullptr;
 };
 
 
@@ -60,15 +61,44 @@ struct MXDllObject
 do                                                                                                                                          \
 {                                                                                                                                           \
     if (!dllModule)break;                                                                                                                   \
-    mxDllObj.dllInit = (mxtoolkit::MX_DLL_FUNCTION_TYPE(DllInit))GetProcAddress(dllModule, "mxDllInit");                                    \
-    mxDllObj.dllUninit = (mxtoolkit::MX_DLL_FUNCTION_TYPE(DllUninit))GetProcAddress(dllModule, "mxDllUninit");                              \
-    mxDllObj.getExportInfo = (mxtoolkit::MX_DLL_FUNCTION_TYPE(GetExportInfo))GetProcAddress(dllModule, "mxGetExportInfo");                  \
-    mxDllObj.getInterfaceInfo = (mxtoolkit::MX_DLL_FUNCTION_TYPE(GetInterfaceInfo))GetProcAddress(dllModule, "mxGetInterfaceInfo");         \
+    mxDllObj.dllInit = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mxDllInit))GetProcAddress(dllModule, "mxDllInit");                                    \
+    mxDllObj.dllUninit = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mxDllUninit))GetProcAddress(dllModule, "mxDllUninit");                              \
+    mxDllObj.getExportInfo = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mxGetExportInfo))GetProcAddress(dllModule, "mxGetExportInfo");                  \
+    mxDllObj.getInterfaceInfo = (mxtoolkit::MX_DLL_FUNCTION_TYPE(mxGetInterfaceInfo))GetProcAddress(dllModule, "mxGetInterfaceInfo");         \
 } while (0);
 
 #if defined(__cplusplus)
     } //extern "C" 
     
+    template<typename IImp>
+    class MXInterfaceImp
+    {
+    public:
+        void InitInterface(const char* version) 
+        {
+            if (!interfaceInfo.name)
+            {
+                if (interfaceInfo.name = strrchr(typeid(IImp).name(), ':'))
+                    interfaceInfo.name++;
+                else
+                    interfaceInfo.name = typeid(IImp).name();
+            }
+
+            if (!interfaceInfo.version)
+                interfaceInfo.version = version;
+        }
+
+        const MXInterfaceInfo& GetInterfaceInfo()
+        {
+            return interfaceInfo;
+        }
+    private:
+        static MXInterfaceInfo interfaceInfo;
+    };
+
+    template<typename IImp>
+    MXInterfaceInfo MXInterfaceImp<IImp>::interfaceInfo;
+
     template<typename Str = std::string>
     HMODULE MXInitDll(MXDllObject& mxDllObj, const typename Str::allocator_type::value_type* dllName)
     {

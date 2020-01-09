@@ -19,6 +19,7 @@ namespace mxwebrequest
 
     class WebRequestImp 
         : public IWebRequest
+        , public mxtoolkit::MXInterfaceImp<WebRequestImp>
         , public mxtoolkit::MXSingleObject<WebRequestImp>
     {
     public:
@@ -45,20 +46,11 @@ namespace mxwebrequest
         //卸载
         mxtoolkit::Result Uninstall() override;
 
-    public:
-        void GetExportInterfaceInfo(mxtoolkit::MXInterfaceInfo* info)
-        {
-            info->name = m_exportInfo.name;
-            info->version = m_exportInfo.version;
-        }
-
     protected:
         void CleanTagRequestHeader(RequestHeader* requestHeader);
         void CleanTagProxy(Proxy* proxy);
 
     protected:
-        mxtoolkit::MXInterfaceInfo m_exportInfo;
-
         SynRequestManager    *m_synRequestManager = nullptr;
         AsynRequestManager   *m_asynRequestManager = nullptr;
         AsynRequestExManager *m_asynRequestExManager = nullptr;
