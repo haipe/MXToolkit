@@ -78,7 +78,7 @@ void MiniBlinkWidget::loadUrl(const QString &url)
     request_url = url;
 
     qDebug() << "MiniBlinkWidget::loadUrl :" << (void*)this;
-    wkeJsBindFunction("onJsCall",MiniBlinkWidget::onHandleJsCall, this, 1);
+    wkeJsBindFunction("onOpenApp",MiniBlinkWidget::onHandleJsCall, this, 1);
 
     wkeLoadURL(web_view,request_url.toStdString().c_str());
 }
@@ -103,6 +103,22 @@ void MiniBlinkWidget::removeHookRequest(const QString &url)
         return;
 
     hook_request.remove(url);
+}
+
+void MiniBlinkWidget::addHookJSFunction(const QString &jsFunction)
+{
+    if(jsFunction.isEmpty())
+        return;
+
+    hook_js_function.insert(jsFunction);
+}
+
+void MiniBlinkWidget::removeHookJSFunction(const QString &jsFunction)
+{
+    if(jsFunction.isEmpty())
+        return;
+
+    hook_js_function.remove(jsFunction);
 }
 
 void MiniBlinkWidget::runJavaScript(const QString &js)
@@ -247,10 +263,16 @@ void MiniBlinkWidget::onLoadUrlEnd(const QString& url, void *job, void *buf, int
 
 void MiniBlinkWidget::onJavaScritCall(const QString &function, jsExecState es)
 {
-    if(function == "onJsCall")
+    qDebug() << "MiniBlinkWidget::onJavaScritCall" << function;
+    const char* paramStr = nullptr;
+    if(jsArgCount(es) >= 1 && (paramStr = jsToString(es, jsArg(es, 0))))
     {
-        const char *text = jsToString(es, jsArg(es, 0));
-        qDebug() << "onJsCall(" << text <<")";
+        QSet<QString>::iterator it = hook_js_function.find(function);
+        if(it != hook_js_function.end())
+        {
+            QString param(paramStr);
+            emit onHookJSFunction(function,param);
+        }
     }
 }
 }

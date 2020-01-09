@@ -25,6 +25,9 @@ public:
     virtual unsigned int addHookRequest(const QString& url);
     virtual void removeHookRequest(const QString& url);
 
+    virtual void addHookJSFunction(const QString& jsFunction);
+    virtual void removeHookJSFunction(const QString& jsFunction);
+
     virtual void runJavaScript(const QString& js);
 
 signals:
@@ -35,6 +38,7 @@ signals:
             wkeNavigationType navType, const QString& url, const wkeWindowFeatures* features);
 
     void onHookRequest(unsigned int, const QString& url, const QString& request, const QString& respons);
+    void onHookJSFunction(const QString& jsFunction, const QString& param);
 
 public slots:
 
@@ -77,6 +81,8 @@ protected:
     };
 
     QMap<unsigned int,HookUrlInfo> hook_jobs;
+
+    QSet<QString> hook_js_function;
 
     wkeWebView web_view;
 };
