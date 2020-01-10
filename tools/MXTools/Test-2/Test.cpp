@@ -58,46 +58,36 @@ int main()
     std::cout << "Hello World!\n";
     
 
-
     try {
+        //Erase previous message queue  
+        //message_queue::remove("message_queue");
+
+        //Open a message queue.  
+
         message_queue mq
         (
             open_only        //only create  
             , "message_queue"  //name  
         );
 
-        //Create a message_queue.  
-//         message_queue mq
-//         (
-//             create_only               //only create  
-//             , "message_queue"           //name  
-//             , 100                       //max message number  
-//             , sizeof(int)               //max message size  
-//         );
-        
-        unsigned int priority;
-        message_queue::size_type recvd_size;
+        unsigned char sendBuffer[sizeof(int) * 2] = { 0 };
 
-        //Receive 100 numbers  
-        for (int i = 0; i < 100; ++i)
+        //Send 100 numbers  
+        for (int i = 0; i < 200; ++i)
         {
-            int number;
-            //boost::posix_time::ptime abs_time;
-            //mq.timed_receive(&number, sizeof(number), recvd_size, priority, abs_time);
-            mq.receive(&number, sizeof(number), recvd_size, priority);
-            printf("I:%d Rec:%d\n", i, number);
-            if (recvd_size != sizeof(number))
-                break;
+            int *bb = (int*)&sendBuffer[0];
+            bb[0] = sizeof(int) * 2;
+            bb[1] = i;
+            mq.send(bb, sizeof(int), 0);
+
         }
+
+
     }
-    catch (interprocess_exception &ex)
-    {
-        message_queue::remove("message_queue");
+    catch (interprocess_exception &ex) {
         std::cout << ex.what() << std::endl;
         return 1;
     }
-
-    message_queue::remove("message_queue");
 
 
     return 0;
