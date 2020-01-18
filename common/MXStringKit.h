@@ -6,6 +6,21 @@
 namespace mxtoolkit
 {
 
+    template<typename T = std::string>
+    T& ReplaceString(T& in, const T& pattern, const T& newpat)
+    {
+        int count = 0;
+        const size_t nsize = newpat.size();
+        const size_t psize = pattern.size();
+
+        for (size_t pos = in.find(pattern, 0); pos != T::npos; pos = in.find(pattern, pos + nsize))
+        {
+            in.replace(pos, psize, newpat);
+            count++;
+        }
+
+        return in;
+    }
 
     template<typename T = std::string, typename Tout = std::vector<T>>
     unsigned int SplitString(const T& in, const T& sp, Tout* out)

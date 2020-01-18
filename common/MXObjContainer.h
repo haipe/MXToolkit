@@ -4,22 +4,23 @@ namespace mxtoolkit
 {
 
 	template<typename ObjType>
-	class ObjContainer
+	class MXObjContainer
 	{
 	public:
 		typedef ObjType* ObjPtr;
-		ObjContainer( ObjPtr obj = nullptr ) :m_obj_ptr( obj ){}
+        MXObjContainer( ObjPtr obj = nullptr ) :obj_ptr( obj ){}
 
 		void SetObj( ObjPtr obj )
 		{
-			m_obj_ptr = obj;
+            obj_ptr = obj;
 		}
 
-		ObjPtr GetObj()
+		inline ObjPtr Obj()
 		{
-			return m_obj_ptr;
+			return obj_ptr;
 		}
+
 	protected:
-		ObjPtr	m_obj_ptr;
+		ObjPtr	obj_ptr;
 	};
 }
