@@ -1,10 +1,28 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <functional>
 #include <Windows.h>
 
 namespace mxtoolkit
 {
+
+    template<typename T = std::string>
+    T& EraseLastString(T& in, const T& willErase)
+    {
+        int pos = in.rfind(willErase);
+        int len = in.length();
+        int eraseLen = willErase.length();
+        while (pos != std::wstring::npos && pos == (len - 1))
+        {
+            in.resize(in.size() - eraseLen);
+            pos = in.rfind(willErase);
+            len = in.length();
+        }
+
+        return in;
+    }
+
 
     template<typename T = std::string>
     T& ReplaceString(T& in, const T& pattern, const T& newpat)
@@ -25,7 +43,8 @@ namespace mxtoolkit
     template<typename T = std::string, typename Tout = std::vector<T>>
     unsigned int SplitString(const T& in, const T& sp, Tout* out)
     {
-        if (in.empty() || out == nullptr)return 0;
+        if (in.empty() || out == nullptr)
+            return 0;
 
         out->clear();
         size_t bpos = 0;
@@ -54,6 +73,42 @@ namespace mxtoolkit
         }
 
         return out->size();
+    }
+
+    template<typename T = std::string, typename Tout = std::vector<T>>
+    unsigned int SplitString(const T& in, const T& sp, std::function<void(const T&)> insertFunction)
+    {
+        if (in.empty() || !insertFunction)
+            return 0;
+
+        size_t bpos = 0;
+        size_t pos = in.find(sp);
+
+        T x = in.substr(bpos, pos);
+        insertFunction(x);
+        int splitCount = 1;
+        if (pos == T::npos)
+            return splitCount;
+
+        unsigned int sp_len = sp.length();
+        unsigned int in_len = in.length();
+
+        while (true)
+        {
+            bpos = pos + sp_len;
+            if (bpos >= in_len)
+                break;
+
+            pos = in.find(sp, bpos);
+
+            x = in.substr(bpos, pos - bpos);
+            insertFunction(x);
+            splitCount++;
+            if (pos == T::npos)
+                break;
+        }
+
+        return splitCount;
     }
 
     template<

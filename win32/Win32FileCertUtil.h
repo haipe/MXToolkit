@@ -7,7 +7,39 @@
 namespace mxtoolkit
 {
     template<typename T = std::string, typename StrType = T::allocator_type::value_type>
-    bool FileExist(const T& path, unsigned int* fileSize = nullptr) 
+    bool FileExist(const StrType* path, unsigned int* fileSize = nullptr)
+    {
+        if (!path)
+            return false;
+
+        bool bValue = false;
+        if (std::is_same<StrType, wchar_t>::value)
+        {
+            WIN32_FIND_DATAW  findFileData;
+            HANDLE hFind = FindFirstFileW((LPCWSTR)path, &findFileData);
+            if ((hFind != INVALID_HANDLE_VALUE))
+            {
+                bValue = true;
+            }
+
+            FindClose(hFind);
+        }
+        else
+        {
+            WIN32_FIND_DATAA  findFileData;
+            HANDLE hFind = FindFirstFileA((LPCSTR)path, &findFileData);
+            if ((hFind != INVALID_HANDLE_VALUE))
+            {
+                bValue = true;
+            }
+
+            FindClose(hFind);
+        }
+        return bValue;
+    }
+
+    template<typename T = std::string, typename StrType = T::allocator_type::value_type>
+    bool FileExist2(const T& path, unsigned int* fileSize = nullptr)
     {
         if (path.empty())
             return false;
@@ -30,6 +62,44 @@ namespace mxtoolkit
         }
 
         return false;
+    }
+
+    template<typename T = std::string, typename StrType = T::allocator_type::value_type>
+    BOOL FolderExist(const StrType* path)
+    {
+        if (!path)
+            return false;
+
+        bool bValue = false;
+        if (std::is_same<StrType, wchar_t>::value)
+        {
+            std::wstring strPath((const wchar_t*)path);
+            EraseLastString<std::wstring>(strPath, _MX_DIR_STRING_W);
+
+            WIN32_FIND_DATAW  findFileData;
+            HANDLE hFind = FindFirstFileW((LPCWSTR)strPath.c_str(), &findFileData);
+            if ((hFind != INVALID_HANDLE_VALUE) && (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+            {
+                bValue = true;
+            }
+
+            FindClose(hFind);
+        }
+        else
+        {
+            std::string strPath((const char*)path);
+            EraseLastString<std::string>(strPath, _MX_DIR_STRING_A);
+
+            WIN32_FIND_DATAA  findFileData;
+            HANDLE hFind = FindFirstFileA((LPCSTR)strPath.c_str(), &findFileData);
+            if ((hFind != INVALID_HANDLE_VALUE) && (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+            {
+                bValue = true;
+            }
+
+            FindClose(hFind);
+        }
+        return bValue;
     }
 
     template<typename T = std::string, typename StrType = T::allocator_type::value_type>
