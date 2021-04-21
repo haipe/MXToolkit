@@ -61,7 +61,7 @@ WindowImpl::~WindowImpl()
 bool WindowImpl::RegWindow(const std::string& cls /*= ""*/)
 {
     std::wstring ws;
-    SCKit::AnsiiToUnicode(cls.c_str(), ws);
+    Win32StringConvert::AnsiiToUnicode(cls.c_str(), ws);
     return RegWindow(ws);
 }
 
@@ -118,7 +118,7 @@ HWND WindowImpl::Create(const std::string& title, HWND parent, int left, int top
     }
 
     std::wstring wt;
-    SCKit::AnsiiToUnicode(title.c_str(), wt);
+    Win32StringConvert::AnsiiToUnicode(title.c_str(), wt);
     return Create(wt, parent, left, top, w, h);
 }
 
@@ -237,11 +237,14 @@ int WindowImpl::ShowModal()
     return nRet;
 }
 
-void WindowImpl::Close(int nRet /*= 0*/)
+void WindowImpl::Close(int nRet /*= 0*/, bool post)
 {
     if (m_hWnd)
     {
-        ::PostMessage(m_hWnd, WM_CLOSE, nRet, 0);
+        if (post)
+            ::PostMessage(m_hWnd, WM_CLOSE, nRet, 0);
+        else
+            ::SendMessage(m_hWnd, WM_CLOSE, nRet, 0);
     }
 }
 

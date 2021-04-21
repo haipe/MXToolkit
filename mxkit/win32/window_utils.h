@@ -35,7 +35,7 @@ public:
     void ShowWindow(bool bShow = true, bool bTakeFocus = false);
     int ShowModal();
 
-    void Close(int nRet = 0);
+    void Close(int nRet = 0, bool post = false);
 
     // 返回窗口对象句柄
     HWND HWnd(){ return m_hWnd; }

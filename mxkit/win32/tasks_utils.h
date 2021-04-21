@@ -6,7 +6,7 @@
 
 #include "mxkit.h"
 
-#include "win32/win_system.h"
+#include "win32/system_utils.h"
 
 _BEGIN_MX_KIT_NAME_SPACE_
 

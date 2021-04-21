@@ -17,7 +17,7 @@ class Thread
 {
 
 public:
-    Thread()
+    Thread():m_isStop(true)
     {
 #ifndef _MX_USE_STD_THREAD
         m_thread = 0;
@@ -94,7 +94,7 @@ protected:
 
 #endif
 protected:
-    bool        m_isStop = true;
+    bool        m_isStop;
 
 #ifdef _MX_USE_STD_THREAD
     std::thread m_thread;

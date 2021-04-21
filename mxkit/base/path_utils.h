@@ -9,7 +9,12 @@ class PathUtils
 {
 public:
 
-    template<typename Str = std::string>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
     static bool FileInfo(const Str& file, Str* path, Str* name, Str* ext)
     {
         typedef typename Str::allocator_type::value_type CharType;
@@ -49,7 +54,12 @@ public:
         return true;
     }
 
-    template<typename Str = std::string>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
     static bool FileInfo(const Str& file, Str* path, Str* name)
     {
         typedef typename Str::allocator_type::value_type CharType;
@@ -74,7 +84,38 @@ public:
         return true;
     }
 
-    template<typename Str = std::string>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
+    static Str FileExt(const Str& file)
+    {
+        typedef Str::allocator_type::value_type CharType;
+        CharType dirChar;
+        if (std::is_same<CharType, wchar_t>::value)
+            dirChar = (CharType)_MX_DIR_CHAR_W;
+        else
+            dirChar = (CharType)_MX_DIR_CHAR_A;
+
+        Str ext_low = file;
+        size_t nPos = file.rfind(dirChar);
+        if (nPos != std::string::npos)
+        {
+            ext_low = file.substr(nPos + 1);
+        }
+
+        return ext_low;
+    }
+
+
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
     bool FolderInfo(const Str& folder, Str* path, Str* name)
     {
         typedef typename Str::allocator_type::value_type CharType;

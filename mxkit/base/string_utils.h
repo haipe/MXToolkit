@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <algorithm>
+
+#include <sstream>
 
 #include "mxkit.h"
 #include "base/string.h"
@@ -13,26 +16,36 @@ _BEGIN_MX_KIT_NAME_SPACE_
 
 
 
-template<typename T,
-    typename Str = std::string>
-std::string ToString(const T& value)
+template<
+	typename T
+    ,typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+     = std::string
+#endif
+>
+Str ToString(const T& value)
 {
     typedef typename Str::allocator_type::value_type CharType;
     if (std::is_same<CharType, wchar_t>::value && std::is_same<Str, std::string>::value)
     {
         std::wstringstream ss;
-        ss << value;
-        return ss.str();
+		ss << value;
+		return Str((CharType*)ss.str().c_str());
     }
     else
     {
         std::stringstream ss;
-        ss << value;
-        return ss.str();
+		ss << value;
+		return Str((CharType*)ss.str().c_str());
     }
 }
 
-template<typename Str = std::string>
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
 Str&& ToString(const RECT& rc)
 {
     typedef typename Str::allocator_type::value_type CharType;
@@ -60,8 +73,78 @@ Str&& ToString(const RECT& rc)
     return std::move(ret);
 }
 
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+Str& ToLower(Str& str)
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower); //将大写的都转换成小写
+    return str;
+}
 
-template<typename Str = std::string>
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+Str& ToUpper(Str& str)
+{
+    transform(str.begin(), str.end(), str.begin(), ::toupper); //将大写的都转换成小写
+    return str;
+}
+
+
+template<
+    typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = char
+#endif
+>
+CharType exchange(CharType c)
+{
+    if (std::is_same<CharType, wchar_t>::value)
+    {
+        if (c <= L'Z' && c >= L'A')
+            c = tolower(c);
+        else if (c >= L'a' && c <= L'z')
+            c = toupper(c);
+
+        return c;
+    }
+    else
+    {
+        if (c <= 'Z' && c >= 'A')
+            c = tolower(c);
+        else if (c >= 'a' && c <= 'z')
+            c = toupper(c);
+
+        return c;
+    }
+}
+
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+Str& ToExchange(Str& str)
+{
+    typedef typename Str::allocator_type::value_type CharType;
+    transform(str.begin(), str.end(), str.begin(), exchange<CharType>);  //大小写切换
+    return str;
+}
+
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
 Str& EraseLast(Str& in, const Str& willErase)
 {
     //删除最后字符，并判断
@@ -82,14 +165,19 @@ Str& EraseLast(Str& in, const Str& willErase)
 }
 
 
-template<typename T = std::string>
-T& ReplaceString(T& in, const T& pattern, const T& newpat, unsigned int* cnt = nullptr)
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+Str& ReplaceString(Str& in, const Str& pattern, const Str& newpat, unsigned int* cnt = nullptr)
 {
     int count = 0;
     const size_t nsize = newpat.size();
     const size_t psize = pattern.size();
 
-    for (size_t pos = in.find(pattern, 0); pos != T::npos; pos = in.find(pattern, pos + nsize))
+    for (size_t pos = in.find(pattern, 0); pos != Str::npos; pos = in.find(pattern, pos + nsize))
     {
         in.replace(pos, psize, newpat);
         count++;
@@ -101,8 +189,17 @@ T& ReplaceString(T& in, const T& pattern, const T& newpat, unsigned int* cnt = n
     return in;
 }
 
-template<typename T = std::string, typename Tout = std::vector<T>>
-unsigned int SplitString(const T& in, const T& sp, Tout* out, bool removeEmpty = false)
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+    ,typename Tout
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::vector<Str>
+#endif
+>
+unsigned int SplitString(const Str& in, const Str& sp, Tout* out, bool removeEmpty = false)
 {
     if (in.empty() || out == nullptr)
         return 0;
@@ -111,12 +208,12 @@ unsigned int SplitString(const T& in, const T& sp, Tout* out, bool removeEmpty =
     size_t bpos = 0;
     size_t pos = in.find(sp);
 
-    T x = in.substr(bpos, pos);
+    Str x = in.substr(bpos, pos);
 
     if (!removeEmpty || !x.empty())
         out->push_back(x);
 
-    if (pos == T::npos)
+    if (pos == Str::npos)
         return (unsigned int)out->size();
 
     size_t sp_len = sp.length();
@@ -132,14 +229,14 @@ unsigned int SplitString(const T& in, const T& sp, Tout* out, bool removeEmpty =
         if (!removeEmpty || !x.empty())
             out->push_back(x);
 
-        if (pos == T::npos)
+        if (pos == Str::npos)
             break;
 
         bpos = pos + sp_len;
         if (bpos >= in_len)
         {
             if (!removeEmpty)
-                out->push_back(T());
+                out->push_back(Str());
 
             break;
         }
@@ -148,8 +245,17 @@ unsigned int SplitString(const T& in, const T& sp, Tout* out, bool removeEmpty =
     return (unsigned int)out->size();
 }
 
-template<typename T = std::string, typename Tout = std::vector<T>>
-unsigned int SplitString(const T& in, const T& sp, std::function<void(unsigned int index ,const T& item)> onOneString)
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+    , typename Tout
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::vector<Str>
+#endif
+>
+unsigned int SplitString(const Str& in, const Str& sp, std::function<void(unsigned int index ,const Str& item)> onOneString)
 {
     if (in.empty() || !onOneString)
         return 0;
@@ -157,12 +263,12 @@ unsigned int SplitString(const T& in, const T& sp, std::function<void(unsigned i
     size_t bpos = 0;
     size_t pos = in.find(sp);
 
-    T x = in.substr(bpos, pos);
+    Str x = in.substr(bpos, pos);
 
     unsigned int index = 0;
     onOneString(index++, x);
 
-    if (pos == T::npos)
+    if (pos == Str::npos)
         return index;
     
     size_t sp_len = sp.length();
@@ -176,13 +282,13 @@ unsigned int SplitString(const T& in, const T& sp, std::function<void(unsigned i
         x = in.substr(bpos, pos - bpos);
         onOneString(index++, x);
 
-        if (pos == T::npos)
+        if (pos == Str::npos)
             break;
 
         bpos = pos + sp_len;
         if (bpos >= in_len)
         {
-            onOneString(index++, T());
+            onOneString(index++, Str());
             return index;
         }
     }

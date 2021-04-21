@@ -274,12 +274,19 @@ public:
         if (!FileExist<wchar_t>(filePath))
             return 0;
         return (GetFileAttributesW(filePath) & FILE_ATTRIBUTE_DIRECTORY) == 0 ? FILE : FOLDER;
-    }
+	}
 
 
-
-
-    template<typename Str = std::string, typename CharType = Str::allocator_type::value_type>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+		,typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= typename Str::allocator_type::value_type
+#endif
+	>
     bool FileSize(const CharType* path, unsigned int* fileSize = nullptr)
     {
         if (!path || !FileExist<CharType>(path))
@@ -314,7 +321,12 @@ public:
         return bValue;
     }
 
-    template<typename Str = std::string>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
     bool FileSize2(const Str& path, unsigned int* fileSize = nullptr)
     {
         typedef typename Str::allocator_type::value_type CharType;
@@ -342,7 +354,12 @@ public:
     }
 
 
-    template<typename Str = std::string>
+	template<
+		typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+		= std::string
+#endif
+	>
     Str FileMd5(const Str& file)
     {
         typedef typename Str::allocator_type::value_type CharType;
@@ -357,7 +374,7 @@ public:
             });
 
         std::vector<std::string> resSplit;
-        mxtoolkit::SplitString<std::string>(res, "\r\n", &resSplit);
+        mxkit::SplitString<std::string>(res, "\r\n", &resSplit);
 
         if (resSplit.size() >= 2 && resSplit[1].length() == 32)
         {

@@ -7,7 +7,7 @@
 
 #include "win32/win_path.h"
 
-//#include "MXSpdlog.h"
+#include "sdplog/utils.h"
 
 #include "MXInterprocessMessage.h"
 
@@ -33,7 +33,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 //声明一个日志
 namespace mxkit
 {
-    //std::shared_ptr<spdlog::logger> static_spdlog = nullptr;
+    std::shared_ptr<spdlog::logger> static_spdlog = nullptr;
 }
 
 //导出接口对象接口定义
@@ -45,7 +45,7 @@ namespace mxkit
     static mxkit::ExportInfo DLL_EXPORT_INFO;
     static std::vector<mxkit::InterfaceInfo> EXPORT_INTERFACE_LIST;
 
-    _MX_C_EXPORT mxkit::Result mxDllInit()
+    _MX_C_EXPORT mxkit::Result InitLibrary()
     {
         mxkit::AutoLocker aLock(EXPORT_FUNCTION_MUTEX);
 
@@ -56,7 +56,7 @@ namespace mxkit
         fileDir += mxkit::TimeUtils::ToString<std::string>("\\log\\%Y-%m-%d\\");
         mxkit::Win32Path<std::string>::CreateDirectory(fileDir);
         
-        //MX_INIT_LOG(fileDir, "MXToolkit");
+        _MX_LOG_INIT_LOG(fileDir, "MXToolkit");
 
         MXInterprocessMessage::Instance()->InitInterface(DLL_VERSION.c_str());
         EXPORT_INTERFACE_LIST.emplace_back(MXInterprocessMessage::Instance()->GetInterfaceInfo());
@@ -68,7 +68,7 @@ namespace mxkit
         RETURN_RESULT(true);
     }
 
-    _MX_C_EXPORT mxkit::Result mxDllUninit()
+    _MX_C_EXPORT mxkit::Result UninitLibrary()
     {
         mxkit::AutoLocker aLock(EXPORT_FUNCTION_MUTEX);
 
@@ -76,7 +76,7 @@ namespace mxkit
         RETURN_RESULT(true);
     }
 
-    _MX_C_EXPORT mxkit::Result mxGetExportInfo(mxkit::ExportInfo **exp)
+    _MX_C_EXPORT mxkit::Result QueryExport(mxkit::ExportInfo **exp)
     {
         mxkit::AutoLocker aLock(EXPORT_FUNCTION_MUTEX);
 
@@ -89,7 +89,7 @@ namespace mxkit
         RETURN_RESULT(false);
     }
 
-    _MX_C_EXPORT mxkit::Result mxGetInterfaceInfo(const mxkit::InterfaceInfo* info, void** it)
+    _MX_C_EXPORT mxkit::Result QueryInterface(const mxkit::InterfaceInfo* info, void** it)
     {
         mxkit::AutoLocker aLock(EXPORT_FUNCTION_MUTEX);
 

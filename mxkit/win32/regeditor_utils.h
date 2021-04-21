@@ -42,16 +42,16 @@ struct RegKeyUtils
 };
 
 template<class T_CHAR>
-class Win32Reg
+class Regeditor
 {
 public:
     typedef T_CHAR*         TCHAR_PTR;
     typedef const T_CHAR*   CONST_TCHAR_PTR;
     typedef std::basic_string<T_CHAR, std::char_traits<T_CHAR>, std::allocator<T_CHAR>> StdTString;
 
-    Win32Reg(RegKey::Name k);
+    Regeditor(RegKey::Name k);
 
-    ~Win32Reg(){}
+    ~Regeditor(){}
 
     //选择根键
     void Select(RegKey::Name nKey)
@@ -369,7 +369,7 @@ protected:
 };
 
 template<>
-Win32Reg<char>::Win32Reg(RegKey::Name k)
+Regeditor<char>::Regeditor(RegKey::Name k)
 {
     reg_open_key = std::bind(RegOpenKeyExA, _STD_PLACE_HOLDERS_::_1, _STD_PLACE_HOLDERS_::_2, _STD_PLACE_HOLDERS_::_3, _STD_PLACE_HOLDERS_::_4, _STD_PLACE_HOLDERS_::_5);
     reg_create_key = std::bind(RegCreateKeyA, _STD_PLACE_HOLDERS_::_1, _STD_PLACE_HOLDERS_::_2, _STD_PLACE_HOLDERS_::_3);
@@ -388,7 +388,7 @@ Win32Reg<char>::Win32Reg(RegKey::Name k)
 
 
 template<>
-Win32Reg<wchar_t>::Win32Reg(RegKey::Name k)
+Regeditor<wchar_t>::Regeditor(RegKey::Name k)
 {
     reg_open_key = std::bind(RegOpenKeyExW, _STD_PLACE_HOLDERS_::_1, _STD_PLACE_HOLDERS_::_2, _STD_PLACE_HOLDERS_::_3, _STD_PLACE_HOLDERS_::_4, _STD_PLACE_HOLDERS_::_5);
     reg_create_key = std::bind(RegCreateKeyW, _STD_PLACE_HOLDERS_::_1, _STD_PLACE_HOLDERS_::_2, _STD_PLACE_HOLDERS_::_3);

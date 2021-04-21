@@ -22,6 +22,24 @@
     <Filter Include="mxkit\base">
       <UniqueIdentifier>{73a0c754-e622-48d6-bc2c-9da393e0bfba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mxkit\easyloggingpp">
+      <UniqueIdentifier>{f2493e84-4e23-4b91-962f-86ff982858e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mxkit\getopt">
+      <UniqueIdentifier>{04e04b27-7745-4e83-bad2-7ff2564d4caa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mxkit\sdplog">
+      <UniqueIdentifier>{8b4922b5-32d2-48ca-a3e2-61eda8b1343f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mxkit\minizip">
+      <UniqueIdentifier>{8e6bcc89-e5d5-485d-b134-858e22d60867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd">
+      <UniqueIdentifier>{25594c01-7907-4ae5-abcb-79908d3c31b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd\minizip">
+      <UniqueIdentifier>{1218a462-6d51-40aa-81cd-4d7b4234b011}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\dllmain.cpp">
@@ -42,9 +60,6 @@
     <ClCompile Include="..\..\mxkit\win32\process_utils.cpp">
       <Filter>mxkit\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\mxkit\base\string_convert.cpp">
-      <Filter>mxkit\base</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\mxkit\win32\ui_thread.cpp">
       <Filter>mxkit\win32</Filter>
     </ClCompile>
@@ -56,6 +71,30 @@
     </ClCompile>
     <ClCompile Include="..\..\mxkit\win32\window_utils.cpp">
       <Filter>mxkit\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mxkit\easyloggingpp\easylogging++.cc">
+      <Filter>mxkit\easyloggingpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mxkit\getopt\getopt.c">
+      <Filter>mxkit\getopt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mxkit\minizip\utils.cpp">
+      <Filter>mxkit\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.c">
+      <Filter>3rd\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.c">
+      <Filter>3rd\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.c">
+      <Filter>3rd\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.c">
+      <Filter>3rd\minizip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.c">
+      <Filter>3rd\minizip</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +241,42 @@
     </ClInclude>
     <ClInclude Include="..\..\mxkit\win32\window_utils.h">
       <Filter>mxkit\win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\easyloggingpp\easylogging++.h">
+      <Filter>mxkit\easyloggingpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\easyloggingpp\utils.h">
+      <Filter>mxkit\easyloggingpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\getopt\getopt.h">
+      <Filter>mxkit\getopt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\getopt\utils.h">
+      <Filter>mxkit\getopt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\sdplog\utils.h">
+      <Filter>mxkit\sdplog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mxkit\minizip\utils.h">
+      <Filter>mxkit\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\crypt.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.h">
+      <Filter>3rd\minizip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

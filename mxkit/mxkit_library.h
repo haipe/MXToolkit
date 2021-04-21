@@ -95,7 +95,7 @@ InterfaceInfo InterfaceImp<IImp>::interfaceInfo;
 #define MX_LOAD_LIBRARY_OBJECT(mxDllObj,dllModule)                                                                                          \
 do                                                                                                                                          \
 {                                                                                                                                           \
-    if (!dllModule)break;                                                                                                                   \
+    if (!dllModule) break;                                                                                                                  \
     mxDllObj.dllInit = (mxkit::_MX_DLL_FUNCTION_TYPE(InitLibrary))GetProcAddress(dllModule, "InitLibrary");                                 \
     mxDllObj.dllUninit = (mxkit::_MX_DLL_FUNCTION_TYPE(UninitLibrary))GetProcAddress(dllModule, "UninitLibrary");                           \
     mxDllObj.getExportInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryExport))GetProcAddress(dllModule, "QueryExport");                           \
@@ -108,7 +108,16 @@ do                                                                              
 
 #endif
 
-template<typename Str = std::string, typename CharType = Str::allocator_type::value_type>
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+    , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = typename Str::allocator_type::value_type
+#endif
+>
 HModule LoadLibrary(MXDllObject& mxDllObj, const CharType* libName)
 {
     HModule mxModule = 0;
@@ -127,8 +136,13 @@ HModule LoadLibrary(MXDllObject& mxDllObj, const CharType* libName)
     return mxModule;
 }
 
-template<bool b = true>
-void FreeLibrary(HModule& md)
+template<
+    bool b 
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = true
+#endif
+>
+void FreeLibrary(HModule& md,bool def = b)
 {
     ::FreeLibrary(md);
     md = 0;

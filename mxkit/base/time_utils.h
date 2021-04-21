@@ -13,7 +13,7 @@ class TimeUtils
 {
 public:
     template<typename T = std::string>
-    static T&& ToString(const char* format)
+    static T ToString(const char* format)
     {
         auto tNow = std::chrono::system_clock::now();
         auto timeNow = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -32,7 +32,7 @@ public:
             ss << "." << std::setfill('0') << std::setw(3) << ms.count();
         }
 
-        return std::move(ss.str());
+        return ss.str();
     }
 };
 

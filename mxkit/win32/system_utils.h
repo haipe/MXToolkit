@@ -7,7 +7,7 @@
 #pragma  comment (lib,"Wtsapi32.lib")
 
 #include "mxkit.h"
-#include "win32/win_version.h"
+#include "win32/windows_version.h"
 
 _BEGIN_MX_KIT_NAME_SPACE_
 
@@ -46,7 +46,10 @@ class Win32System
 {
 public:
     template<
-        typename StringType = std::string
+        typename StringType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = std::string
+#endif
     >
     static StringType& GetLoginUseName(StringType& name)
     {

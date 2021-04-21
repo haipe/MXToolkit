@@ -19,7 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\mxkit\base\string_convert.cpp" />
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.c" />
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.c" />
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.c" />
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.c" />
+    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.c" />
+    <ClCompile Include="..\..\mxkit\easyloggingpp\easylogging++.cc" />
+    <ClCompile Include="..\..\mxkit\getopt\getopt.c" />
+    <ClCompile Include="..\..\mxkit\minizip\utils.cpp" />
     <ClCompile Include="..\..\mxkit\win32\display_utils.cpp" />
     <ClCompile Include="..\..\mxkit\win32\dui_window.cpp" />
     <ClCompile Include="..\..\mxkit\win32\ui_thread.cpp" />
@@ -32,6 +39,12 @@
     <ClCompile Include="MXInterprocessMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\crypt.h" />
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.h" />
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.h" />
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.h" />
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.h" />
+    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.h" />
     <ClInclude Include="..\..\mxkit.h" />
     <ClInclude Include="..\..\mxkit\base\atomic_id.h" />
     <ClInclude Include="..\..\mxkit\base\auto_locker.h" />
@@ -53,8 +66,14 @@
     <ClInclude Include="..\..\mxkit\base\notify_message.h" />
     <ClInclude Include="..\..\mxkit\base\semaphore.h" />
     <ClInclude Include="..\..\mxkit\base\string.h" />
+    <ClInclude Include="..\..\mxkit\easyloggingpp\easylogging++.h" />
+    <ClInclude Include="..\..\mxkit\easyloggingpp\utils.h" />
+    <ClInclude Include="..\..\mxkit\getopt\getopt.h" />
+    <ClInclude Include="..\..\mxkit\getopt\utils.h" />
+    <ClInclude Include="..\..\mxkit\minizip\utils.h" />
     <ClInclude Include="..\..\mxkit\mxkit_library.h" />
     <ClInclude Include="..\..\mxkit\mxkit.h" />
+    <ClInclude Include="..\..\mxkit\sdplog\utils.h" />
     <ClInclude Include="..\..\mxkit\win32\display_utils.h" />
     <ClInclude Include="..\..\mxkit\win32\pip_utils.h" />
     <ClInclude Include="..\..\mxkit\win32\dui_window.h" />
@@ -155,15 +174,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;MX_KIT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;MX_KIT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\mxkit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\mxkit;$(ProjectDir)..\..\3rd\spdlog-1.4.2\include;$(ProjectDir)..\..\3rd\zlib-1.2.11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib-1.2.11\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -190,10 +210,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;MX_KIT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZLIB_WINAPI;WIN32;_CRT_NONSTDC_NO_DEPRECATE;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_WARNINGS;NDEBUG;MX_KIT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\mxkit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\;$(ProjectDir)..\..\mxkit;$(ProjectDir)..\..\3rd\spdlog-1.4.2\include;$(ProjectDir)..\..\3rd\zlib-1.2.11;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -201,6 +221,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib-1.2.11\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

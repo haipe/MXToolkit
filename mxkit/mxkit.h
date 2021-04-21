@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #if defined(_WIN64)
 #define _MX_WIN_ 64
@@ -48,16 +48,20 @@
 #elif _MSC_VER == 1500  //(Visual Studio 2008)
 #define _MX_VS_VER_ 2008
 
+
 #elif _MSC_VER == 1400  //(Visual Studio 2005)
 #define _MX_VS_VER_ 2005
+
 
 #elif _MSC_VER == 1310  //(Visual Studio 2003) 
 
 #define _MX_VS_VER_ 2003
+
 #else
 
 #endif  //end vs -------------------------
 
+#define _MX_DEFAULT_TEMPLATE_ARGUMENTS_ (_MX_VS_VER_ > 2010)
 #if _MX_VS_VER_ > 2010 //begin  =================
 #define _STD_THREAD_
 #define _STD_TEMPLATE_DEFAULT_
@@ -144,18 +148,18 @@ typedef uint32 uint;
 typedef void* VoidPoint;
 
 
-////////////////////////////////// ±ß½ç
+////////////////////////////////// è¾¹ç•Œ
 enum
 {
     _MAX_CACHE_BUFFER = 1024, //
 
     _MAX_STRING_BUFFER = 512, //
 
-    _MAX_PATH_LENGTH = 1024, //Â·¾¶³¤¶È
-    _MAX_FILE_NAME = 256, //ÎÄ¼şÃû³¤¶È
-    _MAX_EX_NAME = 16, //ºó×ºÃû³¤¶È
+    _MAX_PATH_LENGTH = 1024, //è·¯å¾„é•¿åº¦
+    _MAX_FILE_NAME = 256, //æ–‡ä»¶åé•¿åº¦
+    _MAX_EX_NAME = 16, //åç¼€åé•¿åº¦
 
-    _MAX_URL = 512,	//URL³¤¶È
+    _MAX_URL = 512,	//URLé•¿åº¦
 };
 
 typedef uint32 Result;

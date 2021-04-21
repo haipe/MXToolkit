@@ -7,27 +7,26 @@
 
 _BEGIN_MX_KIT_NAME_SPACE_
 
+
 class UIThreadUtils : public SingletonObject<UIThreadUtils>
 {
 public:
-    static bool Run(std::function<void()> f)
+    static bool Sync(std::function<void()> f)
     {
-        return UIThreadUtils::Instance()->Do(true, f);
+        return UIThreadUtils::Instance()->Run(true, f);
     }
 
     static bool Async(std::function<void()> f)
     {
-        return UIThreadUtils::Instance()->Do(false, f);
+        return UIThreadUtils::Instance()->Run(false, f);
     }
 
     UIThreadUtils();
     ~UIThreadUtils();
 
 private:
-    bool Do(bool wait, std::function<void()> f);
+    bool Run(bool wait, std::function<void()> f);
 
-private:
-    unsigned int m_wnd;
 };
 
 _END_MX_KIT_NAME_SPACE_

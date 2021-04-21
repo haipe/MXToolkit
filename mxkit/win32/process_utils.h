@@ -205,7 +205,7 @@ public:
         ZeroMemory(&pi, sizeof(pi));
 
         std::wstring wCmd;
-        SCKit::AnsiiToUnicode(cmd, wCmd);
+        Win32StringConvert::AnsiiToUnicode(cmd, wCmd);
 
         BOOL br = FALSE;
         DWORD lastError = 0;
@@ -242,10 +242,10 @@ public:
         ZeroMemory(&pi, sizeof(pi));
 
         std::wstring wApp;
-        SCKit::AnsiiToUnicode(app, wApp);
+        Win32StringConvert::AnsiiToUnicode(app, wApp);
 
         std::wstring wParam;
-        SCKit::AnsiiToUnicode(param, wParam);
+        Win32StringConvert::AnsiiToUnicode(param, wParam);
 
         BOOL br = FALSE;
         DWORD lastError = 0;
