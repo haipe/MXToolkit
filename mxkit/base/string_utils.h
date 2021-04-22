@@ -15,6 +15,36 @@
 _BEGIN_MX_KIT_NAME_SPACE_
 
 
+template<
+    typename T
+    , typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+T FromString(const Str& value)
+{
+    return T();
+}
+
+template<typename T>
+T FromString(const std::wstring& value)
+{
+    std::wstringstream ss(value);
+    T ret;
+    ss >> ret;
+    return ret;
+}
+
+template<typename T>
+T FromString(const std::string& value)
+{
+    std::stringstream ss(value);
+    T ret;
+    ss >> ret;
+    return ret;
+}
+
 
 template<
 	typename T
@@ -145,7 +175,7 @@ template<
     = std::string
 #endif
 >
-Str& EraseLast(Str& in, const Str& willErase)
+Str& EraseLast(Str& in, const Str& willErase, unsigned int cnt = 1)
 {
     //删除最后字符，并判断
     if (cnt == 0 || willErase.empty())
@@ -295,6 +325,89 @@ unsigned int SplitString(const Str& in, const Str& sp, std::function<void(unsign
 
     return index;
 }
+
+
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+int VersionCompare(const Str& left, const Str& right)
+{
+    size_t left_begin = 0, left_pos = 0;
+    size_t  right_begin = 0, right_pos = 0;
+    while (true)
+    {
+        left_pos = left.find('.', left_begin);
+        right_pos = right.find('.', right_begin);
+
+        Str left_str = left.substr(left_begin, left_pos - left_begin);
+        Str right_str = right.substr(right_begin, right_pos - right_begin);
+
+        int left_v = 0;
+        int right_v = 0;
+
+        try{left_v = std::stoi(left_str);}
+        catch (...) {}
+
+        try {right_v = std::stoi(right_str);}
+        catch (...) {}
+
+        if (left_v != right_v)
+            return left_v < right_v ? -1 : 1;
+
+        left_begin = left_pos + 1;
+        right_begin = right_pos + 1;
+
+        if (left_pos == Str::npos && right_pos == Str::npos)
+            return 0;
+        else if (left_pos == Str::npos)
+            return -1;
+        else if (right_pos == Str::npos)
+            return 1;
+    }
+
+    return 0;
+}
+
+
+template<
+    typename Str
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+    = std::string
+#endif
+>
+struct VersionString
+{
+    VersionString(const Str& v) : ref(v) {}
+    const Str& ref;
+
+    bool operator < (const VersionString& other)const
+    {
+        return VersionCompare(ref, other.ref) < 0;
+    }
+
+    bool operator <= (const VersionString& other)const
+    {
+        return VersionCompare(ref, other.ref) <= 0;
+    }
+
+    bool operator > (const VersionString& other)const
+    {
+        return VersionCompare(ref, other.ref) > 0;
+    }
+
+    bool operator >= (const VersionString& other)const
+    {
+        return VersionCompare(ref, other.ref) >= 0;
+    }
+
+    bool operator == (const VersionString& other)const
+    {
+        return VersionCompare(ref, other.ref) == 0;
+    }
+};
 
 
 _END_MX_KIT_NAME_SPACE_
