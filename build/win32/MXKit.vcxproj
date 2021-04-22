@@ -62,6 +62,7 @@
     <ClInclude Include="..\..\mxkit\base\string_utils.h" />
     <ClInclude Include="..\..\mxkit\base\thread.h" />
     <ClInclude Include="..\..\mxkit\base\time_utils.h" />
+    <ClInclude Include="..\..\mxkit\base\url_utils.h" />
     <ClInclude Include="..\..\mxkit\base\variant_param.h" />
     <ClInclude Include="..\..\mxkit\base\notify_message.h" />
     <ClInclude Include="..\..\mxkit\base\semaphore.h" />

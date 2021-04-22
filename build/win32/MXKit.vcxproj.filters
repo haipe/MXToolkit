@@ -278,6 +278,9 @@
     <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.h">
       <Filter>3rd\minizip</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\mxkit\base\url_utils.h">
+      <Filter>mxkit\base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\mxkit\mxkit.inc">

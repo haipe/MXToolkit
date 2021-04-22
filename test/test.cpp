@@ -3,7 +3,9 @@
 
 #include <iostream>
 
+#include "base/url_utils.h"
 #include "base/string_utils.h"
+
 
 int main()
 {
@@ -24,6 +26,11 @@ int main()
     std::cout << " < " << (mxkit::VersionString<>("2..7.8.9.0") < mxkit::VersionString<>("2.3.4.5.6.7.8.9.0")) << "\n";
     std::cout << " > " << (mxkit::VersionString<>("2.3.339.0") > mxkit::VersionString<>("2.3.4.7.8.9.0")) << "\n";
     std::cout << " < " << (mxkit::VersionString<>("2.3.0.0.0.0.0.0.8.9.0") < mxkit::VersionString<>("2.3.4.5.6.7.8.9.0")) << "\n";
+
+    //std::string tempURL = "http://www.google.com:80/path?大大撒大";
+    std::string tempURL = "http://user:psd@www.google.com:80/path?大大撒大";
+    mxkit::UrlUtils::Url<std::string> parsed = mxkit::UrlUtils::Parse<std::string>(tempURL);
+    parsed.uPort();
     ::system("pause");
 }
 
