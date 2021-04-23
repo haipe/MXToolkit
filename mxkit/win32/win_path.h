@@ -86,7 +86,7 @@ template<>
 static void Win32Path<std::string>::CreateDirectory(const std::string& path)
 {
     std::vector<std::string> dirs;
-    SplitString<std::string>(path, "\\", &dirs);
+    StringUtils::Split<std::string>(path, "\\", &dirs);
 
     if (dirs.size() <= 1)
         return;
@@ -108,7 +108,7 @@ template<>
 static void Win32Path<std::wstring>::CreateDirectory(const std::wstring& path)
 {
     std::vector<std::wstring> dirs;
-    SplitString<std::wstring>(path, L"\\", &dirs);
+    StringUtils::Split<std::wstring>(path, L"\\", &dirs);
 
     if (dirs.size() <= 1)
         return;

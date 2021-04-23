@@ -123,7 +123,7 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
             hashStr.clear();
             appXStr.clear();
 
-            SplitString<std::string>(result, "\r\n", &resultList, true);
+            StringUtils::Split<std::string>(result, "\r\n", &resultList, true);
             if (resultList.empty())
                 return false;
 
@@ -146,7 +146,7 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
                 }
 
                 std::vector<std::string> vec;
-                SplitString<std::string>(*next, " : ", &vec);
+                StringUtils::Split<std::string>(*next, " : ", &vec);
                 if (vec.empty())
                     continue;
 
@@ -155,7 +155,7 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
                 MX_DEBUG("find eStr :" << pos << std::endl);
                 if (pos == 0)
                 {
-                    ReplaceString<std::string>(*next, eStr, "");
+                    StringUtils::Replace<std::string>(*next, eStr, "");
 
                     std::string s = *current;
                     *current = s + *next;
@@ -176,7 +176,7 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
                 MX_DEBUG("line ->" << s << std::endl);
 
                 std::vector<std::string> vec;
-                SplitString<std::string>(s, " : ", &vec);
+                StringUtils::Split<std::string>(s, " : ", &vec);
                 if (vec.empty() || vec.size() > 2)
                     continue;
 
@@ -222,11 +222,11 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
         {
             MX_DEBUG("publisherStr :" << publisherStr << std::endl);
             std::vector<std::string> publisher;
-            SplitString<std::string>(publisherStr, "\\", &publisher);
+            StringUtils::Split<std::string>(publisherStr, "\\", &publisher);
             if (publisher.size() == 3)
             {
                 std::vector<std::string> fileInfo;
-                SplitString<std::string>(publisher[2], ",", &fileInfo);
+                StringUtils::Split<std::string>(publisher[2], ",", &fileInfo);
                 if (fileInfo.size() == 2)
                 {
                     MX_PRINT("publisher : " << publisher[0] << std::endl <<
@@ -250,14 +250,14 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
             MX_DEBUG("hashStr :" << hashStr << std::endl);
 
             std::vector<std::string> ve;
-            SplitString<std::string>(hashStr, "SHA256", &ve);
+            StringUtils::Split<std::string>(hashStr, "SHA256", &ve);
 
             if (ve.size() == 2)
             {
                 m_result = true;
 
                 std::string hs = ve[1];
-                ReplaceString<std::string>(hs, " ", "");
+                StringUtils::Replace<std::string>(hs, " ", "");
                 MX_PRINT("hash : " << hs << std::endl);
 
                 if (info)

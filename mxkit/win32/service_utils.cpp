@@ -14,7 +14,7 @@ bool ServiceUtils::Start(const std::string& name)
     RunCommond::Run(cmd, &result);
 
     std::list<std::string> res;
-    if (SplitString<std::string, std::list<std::string>>(result, "\n", &res, true) > 0)
+    if (StringUtils::Split<std::string, std::list<std::string>>(result, "\n", &res, true) > 0)
     {
         return true;
     }
@@ -29,7 +29,7 @@ bool ServiceUtils::Stop(const std::string& name)
     RunCommond::Run(cmd, &result);
 
     std::list<std::string> res;
-    if (SplitString<std::string, std::list<std::string>>(result, "\n", &res, true) > 0)
+    if (StringUtils::Split<std::string, std::list<std::string>>(result, "\n", &res, true) > 0)
     {
         return true;
     }
@@ -53,15 +53,15 @@ bool ServiceUtils::Status(const std::string& name, StatusMap& status)
     RunCommond::Run(cmd, &result);
 
     std::list<std::string> res;
-    if (SplitString<std::string, std::list<std::string>>(result, "\r\n", &res, true) > 0)
+    if (StringUtils::Split<std::string, std::list<std::string>>(result, "\r\n", &res, true) > 0)
     {
         std::list<std::string>::iterator it = res.begin();
         for (; it != res.end(); it++)
         {
             std::vector<std::string> s;
-            if (SplitString<std::string, std::vector<std::string>>(*it, ":", &s, true) > 0)
+            if (StringUtils::Split<std::string, std::vector<std::string>>(*it, ":", &s, true) > 0)
             {
-                std::string key = ReplaceString<std::string>(s[0], " ", "");
+                std::string key = StringUtils::Replace<std::string>(s[0], " ", "");
                 if (s.size() > 1)
                     status[key] = s[1];
                 else
