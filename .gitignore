@@ -44,4 +44,4 @@ gumbo/qt/Makefile
 *.stash
 vc140.pdb
 
- 
+3rd/zlib/
