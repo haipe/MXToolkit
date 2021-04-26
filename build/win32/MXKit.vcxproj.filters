@@ -81,19 +81,19 @@
     <ClCompile Include="..\..\mxkit\minizip\utils.cpp">
       <Filter>mxkit\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.c">
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\ioapi.c">
       <Filter>3rd\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.c">
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\iowin32.c">
       <Filter>3rd\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.c">
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\mztools.c">
       <Filter>3rd\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.c">
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\unzip.c">
       <Filter>3rd\minizip</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.c">
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\zip.c">
       <Filter>3rd\minizip</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,26 +260,26 @@
     <ClInclude Include="..\..\mxkit\minizip\utils.h">
       <Filter>mxkit\minizip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\crypt.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.h">
-      <Filter>3rd\minizip</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\mxkit\base\url_utils.h">
       <Filter>mxkit\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\crypt.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\ioapi.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\iowin32.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\mztools.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\unzip.h">
+      <Filter>3rd\minizip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\zip.h">
+      <Filter>3rd\minizip</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

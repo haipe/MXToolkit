@@ -11,7 +11,7 @@ _BEGIN_MX_KIT_NAME_SPACE_
 
 extern std::shared_ptr<spdlog::logger> static_spdlog;
 
-class MXSpdlog
+class SpdlogUtils
 {
 public:
     static std::shared_ptr<spdlog::logger> CreateLogger(const std::string& logPath, const std::string& name)
@@ -82,8 +82,8 @@ public:
 
 _END_MX_KIT_NAME_SPACE_
 
-#define _MX_LOG_INIT_LOG(path, name) mxkit::MXSpdlog::CreateLogger(path, name);
-#define _MX_LOG_RELEASE_LOG()        mxkit::MXSpdlog::ReleaseLogger();
+#define _MX_LOG_INIT_LOG(path, name) mxkit::SpdlogUtils::CreateLogger(path, name);
+#define _MX_LOG_RELEASE_LOG()        mxkit::SpdlogUtils::ReleaseLogger();
 
 #define _MX_LOG_TRACE_EX(logger, fmt, ...) { if(logger)logger->trace(fmt, ## __VA_ARGS__);}
 #define _MX_LOG_DEBUG_EX(logger, fmt, ...) { if(logger)logger->debug(fmt, ## __VA_ARGS__);}
@@ -109,9 +109,9 @@ _END_MX_KIT_NAME_SPACE_
 // #define MX_CRITICAL(fmt, ...) if(mxkit::MXSpdlog::static_spdlog)mxkit::MXSpdlog::static_spdlog->critical(fmt, ##__VA_ARGS__);
 
 
-#define _MX_LOG_TRACE    mxkit::MXSpdlog::Trace
-#define _MX_LOG_DEBUG    mxkit::MXSpdlog::Debug
-#define _MX_LOG_INFO     mxkit::MXSpdlog::Info
-#define _MX_LOG_WARN     mxkit::MXSpdlog::Warn
-#define _MX_LOG_ERROR    mxkit::MXSpdlog::Error
-#define _MX_LOG_CRITICAL mxkit::MXSpdlog::Critical
+#define _MX_LOG_TRACE    mxkit::SpdlogUtils::Trace
+#define _MX_LOG_DEBUG    mxkit::SpdlogUtils::Debug
+#define _MX_LOG_INFO     mxkit::SpdlogUtils::Info
+#define _MX_LOG_WARN     mxkit::SpdlogUtils::Warn
+#define _MX_LOG_ERROR    mxkit::SpdlogUtils::Error
+#define _MX_LOG_CRITICAL mxkit::SpdlogUtils::Critical

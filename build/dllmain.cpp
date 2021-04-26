@@ -4,10 +4,10 @@
 #include "mxkit_library.h"
 #include "base/auto_locker.h"
 #include "base/time_utils.h"
-
+#include "win32/file_utils.h"
 #include "win32/win_path.h"
 
-#include "sdplog/utils.h"
+#include "spdlog/utils.h"
 
 #include "MXInterprocessMessage.h"
 
@@ -52,14 +52,14 @@ namespace mxkit
         if (DLL_EXPORT_INFO.version && DLL_EXPORT_INFO.interfaceInfo)
             RETURN_RESULT(true);
 
-        std::string fileDir(mxkit::Win32Path<std::string>::GetModuleDirectory(g_hModule));
+        std::string fileDir(mxkit::Win32Path<std::string>::ModuleDirectory(g_hModule));
         fileDir += mxkit::TimeUtils::ToString<std::string>("\\log\\%Y-%m-%d\\");
-        mxkit::Win32Path<std::string>::CreateDirectory(fileDir);
+        mxkit::FileSystem::CreateFolder<std::string>(fileDir);
         
         _MX_LOG_INIT_LOG(fileDir, "MXToolkit");
 
         MXInterprocessMessage::Instance()->InitInterface(DLL_VERSION.c_str());
-        EXPORT_INTERFACE_LIST.emplace_back(MXInterprocessMessage::Instance()->GetInterfaceInfo());
+        EXPORT_INTERFACE_LIST.emplace_back(MXInterprocessMessage::Instance()->Interface());
 
         DLL_EXPORT_INFO.interfaceCount = EXPORT_INTERFACE_LIST.size();
         DLL_EXPORT_INFO.version = DLL_VERSION.c_str();//当前时间戳

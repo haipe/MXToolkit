@@ -77,7 +77,7 @@ public:
         StringType file_part_path = folderPath;
         StringType file_path;
 
-        int symbol_index = 0;
+        size_t symbol_index = 0;
         while (symbol_index != StringType::npos)
         {
             symbol_index = file_part_path.find('\\');
@@ -91,7 +91,7 @@ public:
             {
                 file_path += file_name;
 
-                if (_STD_NAME_SPACE_::is_same<CharType, wchar_t>::value)
+                if (std::is_same<CharType, wchar_t>::value)
                     CreateDirectoryW((LPCWSTR)file_path.c_str(), NULL);
                 else
                     CreateDirectoryA((LPCSTR)file_path.c_str(), NULL);

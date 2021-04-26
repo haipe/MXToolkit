@@ -214,7 +214,7 @@ public:
 	static AString UrlEncode(const AString &str_source)
 	{
 		char const *in_str = str_source.c_str();
-		int in_str_len = strlen(in_str);
+		size_t in_str_len = strlen(in_str);
 		std::string out_str;
 #if __cplusplus > 199711L
 		unsigned char c;
@@ -276,7 +276,7 @@ public:
 	static AString UrlDecode(const AString &str_source)
 	{
 		char const *in_str = str_source.c_str();
-		int in_str_len = strlen(in_str);
+		size_t in_str_len = strlen(in_str);
 		std::string out_str;
 		char *str;
 

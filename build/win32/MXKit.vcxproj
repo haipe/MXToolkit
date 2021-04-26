@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.c" />
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.c" />
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.c" />
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.c" />
-    <ClCompile Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.c" />
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\ioapi.c" />
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\iowin32.c" />
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\mztools.c" />
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\unzip.c" />
+    <ClCompile Include="..\..\3rd\zlib\contrib\minizip\zip.c" />
     <ClCompile Include="..\..\mxkit\easyloggingpp\easylogging++.cc" />
     <ClCompile Include="..\..\mxkit\getopt\getopt.c" />
     <ClCompile Include="..\..\mxkit\minizip\utils.cpp" />
@@ -39,12 +39,12 @@
     <ClCompile Include="MXInterprocessMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\crypt.h" />
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\ioapi.h" />
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\iowin32.h" />
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\mztools.h" />
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\unzip.h" />
-    <ClInclude Include="..\..\3rd\zlib-1.2.11\contrib\minizip\zip.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\crypt.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\ioapi.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\iowin32.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\mztools.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\unzip.h" />
+    <ClInclude Include="..\..\3rd\zlib\contrib\minizip\zip.h" />
     <ClInclude Include="..\..\mxkit.h" />
     <ClInclude Include="..\..\mxkit\base\atomic_id.h" />
     <ClInclude Include="..\..\mxkit\base\auto_locker.h" />
@@ -184,7 +184,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib-1.2.11\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -222,7 +222,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib-1.2.11\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\3rd\zlib\contrib\vstudio\vc14\x86\ZlibDll$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

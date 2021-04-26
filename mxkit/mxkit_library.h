@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 #define _MX_CALL_TYPE __cdecl
 
-#define _MX_DLL_FUNCTION_TYPE(func) _##func##_Type_
+#define _MX_DLL_FUNCTION_TYPE(func) _##func##_TYPE_
 
 #define _MX_C_EXPORT extern "C" _declspec(dllexport)
 
@@ -36,24 +36,24 @@ extern "C" {
     struct ExportInfo    //导出库信息
     {
         const char* version = nullptr;
-        unsigned int interfaceCount = 0;
+        uint32 interfaceCount = 0;
         const InterfaceInfo* interfaceInfo = nullptr;
     };
 
 
     //初始化
-    typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(InitLibrary))();
+    typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(Init))();
     //卸载
-    typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(UninitLibrary))();
+    typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(Uninit))();
     //获取所有接口信息
     typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(QueryExport))(ExportInfo**);
     //获取接口
     typedef Result(_MX_CALL_TYPE* _MX_DLL_FUNCTION_TYPE(QueryInterface))(const InterfaceInfo*, void**);
 
-    struct MXDllObject
+    struct LibraryObject
     {
-        _MX_DLL_FUNCTION_TYPE(InitLibrary) dllInit = nullptr;
-        _MX_DLL_FUNCTION_TYPE(UninitLibrary) dllUninit = nullptr;
+        _MX_DLL_FUNCTION_TYPE(Init) dllInit = nullptr;
+        _MX_DLL_FUNCTION_TYPE(Uninit) dllUninit = nullptr;
         _MX_DLL_FUNCTION_TYPE(QueryExport) getExportInfo = nullptr;
         _MX_DLL_FUNCTION_TYPE(QueryInterface) getInterfaceInfo = nullptr;
     };
@@ -80,7 +80,7 @@ public:
             interfaceInfo.version = version;
     }
 
-    const InterfaceInfo& GetInterfaceInfo()
+    const InterfaceInfo& Interface()
     {
         return interfaceInfo;
     }
@@ -92,14 +92,14 @@ template<typename IImp>
 InterfaceInfo InterfaceImp<IImp>::interfaceInfo;
 
 #ifdef _MX_WIN_
-#define MX_LOAD_LIBRARY_OBJECT(mxDllObj,dllModule)                                                                                          \
-do                                                                                                                                          \
-{                                                                                                                                           \
-    if (!dllModule) break;                                                                                                                  \
-    mxDllObj.dllInit = (mxkit::_MX_DLL_FUNCTION_TYPE(InitLibrary))GetProcAddress(dllModule, "InitLibrary");                                 \
-    mxDllObj.dllUninit = (mxkit::_MX_DLL_FUNCTION_TYPE(UninitLibrary))GetProcAddress(dllModule, "UninitLibrary");                           \
-    mxDllObj.getExportInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryExport))GetProcAddress(dllModule, "QueryExport");                           \
-    mxDllObj.getInterfaceInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryInterface))GetProcAddress(dllModule, "QueryInterface");                  \
+#define MX_LOAD_LIBRARY_OBJECT(mxLibraryObj,dllModule)                                                                                          \
+do                                                                                                                                              \
+{                                                                                                                                               \
+    if (!dllModule) break;                                                                                                                      \
+    mxLibraryObj.dllInit = (mxkit::_MX_DLL_FUNCTION_TYPE(Init))GetProcAddress(dllModule, "InitLibrary");                                        \
+    mxLibraryObj.dllUninit = (mxkit::_MX_DLL_FUNCTION_TYPE(Uninit))GetProcAddress(dllModule, "UninitLibrary");                                  \
+    mxLibraryObj.getExportInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryExport))GetProcAddress(dllModule, "QueryExport");                           \
+    mxLibraryObj.getInterfaceInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryInterface))GetProcAddress(dllModule, "QueryInterface");                  \
 } while (0);
 
 #else
@@ -118,7 +118,7 @@ template<
     = typename Str::allocator_type::value_type
 #endif
 >
-HModule LoadLibrary(MXDllObject& mxDllObj, const CharType* libName)
+HModule LoadLibrary(LibraryObject& mxDllObj, const CharType* libName)
 {
     HModule mxModule = 0;
 #ifdef _MX_WIN_
