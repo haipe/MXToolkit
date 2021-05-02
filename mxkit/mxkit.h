@@ -34,6 +34,10 @@
 #define _MX_VS_VER_ 2019
 #define _MX_CPP_VER_ 11
 
+#elif _MSC_VER == 1900    //(Visual Studio 2015)
+#define _MX_VS_VER_ 2015
+#define _MX_CPP_VER_ 11
+
 #elif _MSC_VER == 1800    //(Visual Studio 2013)
 #define _MX_VS_VER_ 2013
 #define _MX_CPP_VER_ 11
@@ -151,6 +155,7 @@ typedef void* VoidPoint;
 ////////////////////////////////// 边界
 enum
 {
+    _MX_LITTLE_BUFFER = 256,
     _MAX_CACHE_BUFFER = 1024, //
 
     _MAX_STRING_BUFFER = 512, //
@@ -174,9 +179,9 @@ public:
         _ERROR_ = -1
     };
 
-    static bool Success(const Result& rt) { rt == 0 ? true : false; }
-    static bool Fail(const Result& rt) { rt > 0 ? true : false; }
-    static bool Error(const Result& rt) { rt < 0 ? true : false; }
+    static bool Success(const Result& rt) { return rt == 0 ? true : false; }
+    static bool Fail(const Result& rt) { return rt > 0 ? true : false; }
+    static bool Error(const Result& rt) { return rt < 0 ? true : false; }
 
     template<typename T>
     static Result Value(const T& v) { return (Result)v; }

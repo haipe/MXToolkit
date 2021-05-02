@@ -7,6 +7,7 @@
 #include "mxkit.h"
 
 #include "getopt/getopt.h"
+#include "base/string_convert.h"
 
 
 _BEGIN_MX_KIT_NAME_SPACE_

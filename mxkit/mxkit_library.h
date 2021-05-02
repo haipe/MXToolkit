@@ -52,10 +52,10 @@ extern "C" {
 
     struct LibraryObject
     {
-        _MX_DLL_FUNCTION_TYPE(Init) dllInit = nullptr;
-        _MX_DLL_FUNCTION_TYPE(Uninit) dllUninit = nullptr;
-        _MX_DLL_FUNCTION_TYPE(QueryExport) getExportInfo = nullptr;
-        _MX_DLL_FUNCTION_TYPE(QueryInterface) getInterfaceInfo = nullptr;
+        _MX_DLL_FUNCTION_TYPE(Init) init = nullptr;
+        _MX_DLL_FUNCTION_TYPE(Uninit) uninit = nullptr;
+        _MX_DLL_FUNCTION_TYPE(QueryExport) queryExport = nullptr;
+        _MX_DLL_FUNCTION_TYPE(QueryInterface) queryInterface = nullptr;
     };
 
 
@@ -96,10 +96,10 @@ InterfaceInfo InterfaceImp<IImp>::interfaceInfo;
 do                                                                                                                                              \
 {                                                                                                                                               \
     if (!dllModule) break;                                                                                                                      \
-    mxLibraryObj.dllInit = (mxkit::_MX_DLL_FUNCTION_TYPE(Init))GetProcAddress(dllModule, "InitLibrary");                                        \
-    mxLibraryObj.dllUninit = (mxkit::_MX_DLL_FUNCTION_TYPE(Uninit))GetProcAddress(dllModule, "UninitLibrary");                                  \
-    mxLibraryObj.getExportInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryExport))GetProcAddress(dllModule, "QueryExport");                           \
-    mxLibraryObj.getInterfaceInfo = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryInterface))GetProcAddress(dllModule, "QueryInterface");                  \
+    mxLibraryObj.init = (mxkit::_MX_DLL_FUNCTION_TYPE(Init))GetProcAddress(dllModule, "InitLibrary");                                           \
+    mxLibraryObj.uninit = (mxkit::_MX_DLL_FUNCTION_TYPE(Uninit))GetProcAddress(dllModule, "UninitLibrary");                                     \
+    mxLibraryObj.queryExport = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryExport))GetProcAddress(dllModule, "QueryExport");                             \
+    mxLibraryObj.queryInterface = (mxkit::_MX_DLL_FUNCTION_TYPE(QueryInterface))GetProcAddress(dllModule, "QueryInterface");                    \
 } while (0);
 
 #else

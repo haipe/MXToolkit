@@ -95,11 +95,11 @@ public:
         typedef Str::allocator_type::value_type CharType;
         CharType dirChar;
         if (std::is_same<CharType, wchar_t>::value)
-            dirChar = (CharType)_MX_DIR_CHAR_W;
+            dirChar = (CharType)_MX_DOT_CHAR_W;
         else
-            dirChar = (CharType)_MX_DIR_CHAR_A;
+            dirChar = (CharType)_MX_DOT_CHAR_A;
 
-        Str ext_low = file;
+        Str ext_low;
         size_t nPos = file.rfind(dirChar);
         if (nPos != std::string::npos)
         {

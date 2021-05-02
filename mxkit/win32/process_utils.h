@@ -17,46 +17,160 @@ _BEGIN_MX_KIT_NAME_SPACE_
 class ProcessUtils
 {
 public:
-    static PROCESSENTRY32* GetProcessEntry(LPCTSTR szExeName, PROCESSENTRY32* pProc)
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+        static bool FindProcess(const typename CharType* processName, std::function<void(const PROCESSENTRY32&, bool& bBreak)> func)
     {
-        if (!pProc)
-            return NULL;
+#ifdef UNICODE
+
+        if (!processName)
+            return false;
+        
+        HANDLE hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
 
         PROCESSENTRY32 pc = { sizeof(PROCESSENTRY32) };
-        HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
-        if (Process32First(hSnapshot, &pc))
+        if (!Process32First(hProcessSnap, &pc))
         {
-            do{
+            if (NULL != hProcessSnap)
+                CloseHandle(hProcessSnap);
 
-                if (!_tcsicmp(pc.szExeFile, szExeName))
-                {
-                    *pProc = pc;
-                    return pProc;
-                    //返回explorer.exe进程的PID
-                    //printf("explorer's PID=%d\n", Pc.th32ProcessID);
-                    //return OpenProcess(PROCESS_ALL_ACCESS, TRUE, pc.th32ProcessID);
-                }
-
-            } while (Process32Next(hSnapshot, &pc));
+            return false;
         }
 
-        return NULL;
+        std::wstring ws;
+        if (std::is_same<CharType, char>::value)
+            Win32StringConvert::AnsiiToUnicode(processName, ws);
+
+        bool bFind = false;
+        do {
+
+            bool bSame = false;
+            if (std::is_same<CharType, char>::value)
+                bSame = (wcsicmp(pc.szExeFile, ws.c_str()) == 0);
+            else
+                bSame = (wcsicmp(pc.szExeFile, (const wchar_t*)processName) == 0);
+
+            if (!bSame)
+                continue;
+
+            if (!func)
+            {
+                bFind = true;
+                break;
+            }
+
+            bool bBreak = false;
+            func(pc, bBreak);
+            if (bBreak)
+            {
+                bFind = bFind | false;
+                break;
+            }
+
+            bFind = true;
+        } while (Process32Next(hProcessSnap, &pc));
+
+        if (NULL != hProcessSnap)
+            CloseHandle(hProcessSnap);
+
+        return bFind;
+#endif
+
     }
 
-    static const TCHAR* GetProcessUserName(DWORD dwID, TCHAR* nameBuffer, DWORD nBufferSize, TCHAR* domainBuffer = NULL, DWORD dBufferSize = 0) // 进程ID 
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static PROCESSENTRY32* FindProcess(const typename CharType* processName, PROCESSENTRY32& refProc)
     {
-        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, dwID);
+        bool bFind = false;
+        FindProcess<Str, CharType>(processName, [&](const PROCESSENTRY32& pro, bool& bBreak)
+        {
+            refProc = pro;
+            bFind = true;
+            bBreak = true;
+        });
+
+        return bFind ? &refProc : nullptr;
+    }
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+        static uint32 FindProcess(const typename CharType* processName, std::vector<PROCESSENTRY32> procList)
+    {
+        procList.clear();
+        FindProcess<Str, CharType>(processName, [&](const PROCESSENTRY32& pro, bool& bBreak)
+        {
+            procList.push_back(pro);
+        });
+
+        return procList.size();
+    }
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static bool ProcessToken(const typename CharType* processName, HANDLE& phExplorerToken)
+    {
+        phExplorerToken = 0;
+        procList.clear();
+        FindProcess<Str, CharType>(processName, [&](const PROCESSENTRY32& pro)
+        {
+            HANDLE hToken;
+            HANDLE hProcess = NULL;
+            if (OpenProcessToken(pro.th32ProcessID, TOKEN_DUPLICATE, &hToken))
+            {
+                HANDLE hNewToken = NULL;
+                if(DuplicateTokenEx(hToken, TOKEN_ALL_ACCESS, NULL, SecurityImpersonation, TokenPrimary, &hNewToken))
+                    phExplorerToken = hNewToken;
+
+                CloseHandle(hToken);
+            }
+
+            CloseHandle(hProcess);
+
+            return phExplorerToken != 0 ? false : true;
+        });
+
+        return phExplorerToken != 0;
+    }
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static const CharType* ProcessUser(DWORD processID, Str& userName, Str* domainName) // 进程ID 
+    {
+        userName.clear();
+        HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, processID);
         if (hProcess == NULL)
             return NULL;
 
         HANDLE hToken = NULL;
         BOOL bResult = FALSE;
         DWORD dwSize = 0;
-
-        TCHAR szUserName[MAX_PATH] = { 0 };
-        TCHAR szDomain[MAX_PATH] = { 0 };
-        DWORD dwDomainSize = MAX_PATH;
-        DWORD dwNameSize = MAX_PATH;
 
         SID_NAME_USE    SNU;
         PTOKEN_USER pTokenUser = NULL;
@@ -91,102 +205,46 @@ public:
                 __leave;
             }
 
-            if (LookupAccountSid(NULL, pTokenUser->User.Sid, szUserName, &dwNameSize, szDomain, &dwDomainSize, &SNU) != 0)
+            CharType szUserName[MAX_PATH] = { 0 };
+            CharType szDomain[MAX_PATH] = { 0 };
+            DWORD dwDomainSize = MAX_PATH;
+            DWORD dwNameSize = MAX_PATH;
+            
+            BOOL success = FALSE;
+            if (std::is_same<CharType, char>::value)
+                success = LookupAccountSidA(NULL, pTokenUser->User.Sid, (LPSTR)szUserName, &dwNameSize, (LPSTR)szDomain, &dwDomainSize, &SNU);
+            else
+                success = LookupAccountSidW(NULL, pTokenUser->User.Sid, (LPWSTR)szUserName, &dwNameSize, (LPWSTR)szDomain, &dwDomainSize, &SNU);
+            
+            if (success != FALSE)
             {
-                if (nameBuffer)
-                    _tcscpy_s(nameBuffer, nBufferSize, szUserName);
+                userName = szUserName;
 
-                if (domainBuffer)
-                    _tcscpy_s(domainBuffer, dBufferSize, szDomain);
-
-                return nameBuffer;
+                if (domainName)
+                    domainName = szDomain;
             }
         }
         __finally
         {
-            if (pTokenUser != NULL)
-                free(pTokenUser);
         }
+        
+        if (pTokenUser != NULL)
+            free(pTokenUser);
 
-        return NULL;
+        return userName.empty() ? NULL : userName.c_str();
     }
 
-    static DWORD GetProcessToken(LPCWSTR processName, OUT PHANDLE phExplorerToken)
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static BOOL ExecWithToken(HANDLE hPtoken, const CharType* cmd, PROCESS_INFORMATION* ppi = nullptr)
     {
-        DWORD dwStatus = ERROR_FILE_NOT_FOUND;
-        BOOL bRet = FALSE;
-        HANDLE hProcess = NULL;
-        HANDLE hProcessSnap = NULL;
-        TCHAR szExplorerPath[MAX_PATH] = { 0 };
-        TCHAR FileName[MAX_PATH] = { 0 };
-        PROCESSENTRY32 pe32 = { 0 };
-
-        __try
-        {
-            hProcessSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-            if (hProcessSnap == INVALID_HANDLE_VALUE)
-            {
-                dwStatus = GetLastError();
-                __leave;
-            }
-            pe32.dwSize = sizeof(PROCESSENTRY32);
-            if (!Process32First(hProcessSnap, &pe32))
-            {
-                dwStatus = GetLastError();
-                __leave;
-            }
-
-            do {
-                if (_wcsicmp(pe32.szExeFile, processName) == 0)
-                {
-                    hProcess = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, pe32.th32ProcessID);
-                    if (NULL != hProcess)
-                    {
-                        HANDLE hToken;
-                        if (OpenProcessToken(hProcess, TOKEN_DUPLICATE, &hToken))
-                        {
-                            HANDLE hNewToken = NULL;
-                            DuplicateTokenEx(hToken, TOKEN_ALL_ACCESS, NULL, SecurityImpersonation, TokenPrimary, &hNewToken);
-                            *phExplorerToken = hNewToken;
-                            dwStatus = 0;
-                            CloseHandle(hToken);
-                        }
-
-                        CloseHandle(hProcess);
-                        hProcess = NULL;
-
-                        break;
-                    }
-                }
-
-            } while (Process32Next(hProcessSnap, &pe32));
-        }
-        __finally
-        {
-            if (NULL != hProcess)
-            {
-                CloseHandle(hProcess);
-            }
-            if (NULL != hProcessSnap)
-            {
-                CloseHandle(hProcessSnap);
-            }
-        }
-
-        return dwStatus;
-    }
-
-    static void ExecWithoutAdmin(const char* cmd, PROCESS_INFORMATION* ppi)
-    {
-        HANDLE hPtoken = 0;
-        GetProcessToken(L"explorer.exe", &hPtoken);
-        if (hPtoken)
-            CreateProcessWithToken(hPtoken, cmd, ppi);
-    }
-
-    static BOOL CreateProcessWithToken(HANDLE hPtoken, const char* cmd, PROCESS_INFORMATION* ppi)
-    {
-        typedef BOOL(WINAPI* WIN32_API_CreateProcessWithTokenW)(
+        typedef BOOL(WINAPI* API_CreateProcessWithTokenW)(
             __in         HANDLE hToken,
             __in         DWORD dwLogonFlags,
             __in_opt     LPCWSTR lpApplicationName,
@@ -198,14 +256,18 @@ public:
             __out        LPPROCESS_INFORMATION lpProcessInfo
             );
 
-        static WIN32_API_CreateProcessWithTokenW f_CreateProcessWithTokenW =
-            (WIN32_API_CreateProcessWithTokenW)GetProcAddress(GetModuleHandleA("Advapi32"), "CreateProcessWithTokenW");
+        static API_CreateProcessWithTokenW f_CreateProcessWithTokenW = nullptr;
+        if(!f_CreateProcessWithTokenW)
+            f_CreateProcessWithTokenW = (API_CreateProcessWithTokenW)GetProcAddress(GetModuleHandleA("Advapi32"), "CreateProcessWithTokenW");
 
         PROCESS_INFORMATION pi;
         ZeroMemory(&pi, sizeof(pi));
 
         std::wstring wCmd;
-        Win32StringConvert::AnsiiToUnicode(cmd, wCmd);
+        if (std::is_same<CharType, char>::value)
+            Win32StringConvert::AnsiiToUnicode((const char*)cmd, wCmd);
+        else
+            wCmd = cmd;
 
         BOOL br = FALSE;
         DWORD lastError = 0;
@@ -236,16 +298,56 @@ public:
         return br;
     }
 
-    static BOOL CreateWin32Process(const char* app, const char* param, PROCESS_INFORMATION* ppi =  NULL, bool show = false, DWORD waitTime = -1)
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static void ExecWithoutAdmin(const CharType* cmd, PROCESS_INFORMATION* ppi)
+    {
+        HANDLE hPtoken = 0;
+        if(std::is_same<CharType, char >::value)
+            ProcessToken<std::string>("explorer.exe", hPtoken);
+        else
+            ProcessToken<std::wstring>(L"explorer.exe", hPtoken);
+
+        if (!hPtoken)
+            return;
+
+        ExecWithToken<Str>(hPtoken, cmd, ppi);
+    }
+
+    template<
+        typename Str
+        , typename CharType
+#if _MX_DEFAULT_TEMPLATE_ARGUMENTS_
+        = typename Str::allocator_type::value_type
+#endif
+    >
+    static BOOL Exec(const typename CharType* app, const typename CharType* param = nullptr, PROCESS_INFORMATION* ppi = nullptr, bool show = false, DWORD waitTime = -1)
     {
         PROCESS_INFORMATION pi;
         ZeroMemory(&pi, sizeof(pi));
 
         std::wstring wApp;
-        Win32StringConvert::AnsiiToUnicode(app, wApp);
+        if (app)
+        {
+            if (std::is_same<CharType, char >::value)
+                Win32StringConvert::AnsiiToUnicode((const char*)app, wApp);
+            else
+                wApp = (const wchar_t*)app;
+        }
 
         std::wstring wParam;
-        Win32StringConvert::AnsiiToUnicode(param, wParam);
+        if (param)
+        {
+            if (std::is_same<CharType, char >::value)
+                Win32StringConvert::AnsiiToUnicode((const char*)param, wParam);
+            else
+                wParam = (const wchar_t*)param;
+        }
 
         BOOL br = FALSE;
         DWORD lastError = 0;
@@ -263,7 +365,6 @@ public:
         si.dwYCountChars = 9999;
         si.dwFlags = STARTF_USESHOWWINDOW;
         si.wShowWindow = show ? SW_SHOWNORMAL : SW_HIDE;
-        //说明进程将以隐藏的方式在后台执行    
         si.cbReserved2 = 0;
         si.lpReserved2 = NULL;
         si.hStdInput = stdin;
@@ -282,6 +383,7 @@ public:
             ::CloseHandle(pi.hProcess);
             ::CloseHandle(pi.hThread);
         }
+
         return br;
     }
 
@@ -322,7 +424,7 @@ public:
     {
         PROCESSENTRY32 pc = { sizeof(PROCESSENTRY32) };
         HANDLE hExp = 0;
-        if (!GetProcessEntry(_T("explorer.exe"), &pc))
+        if (!FindProcess<std::string>("explorer.exe", pc))
             return FALSE;
 
         hExp = OpenProcess(PROCESS_ALL_ACCESS, TRUE, pc.th32ProcessID);

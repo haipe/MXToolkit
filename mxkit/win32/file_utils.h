@@ -229,26 +229,36 @@ public:
     }
 
     template<typename T>
-    static bool FileExist(const T* filePath) { return false; }
+    static bool FileExist(const T* filePath, uint32* flags = nullptr) { return false; }
 
     template<>
-    static bool FileExist(const char* filePath)
+    static bool FileExist(const char* filePath, uint32* flags)
     {
         if (!filePath)
             return false;
-        return GetFileAttributesA(filePath) != -1;
+
+        if (!flags)
+            return GetFileAttributesA(filePath) != -1;
+
+        return (*flags = GetFileAttributesA(filePath)) != -1;
     }
 
     template<>
-    static bool FileExist(const wchar_t* filePath)
+    static bool FileExist(const wchar_t* filePath, uint32* flags)
     {
         if (!filePath)
             return false;
-        return GetFileAttributesW(filePath) != -1;
+
+        if (!flags)
+            return GetFileAttributesW(filePath) != -1;
+
+        return (*flags = GetFileAttributesW(filePath)) != -1;
     }
 
     enum FILE_TYPE
     {
+        NOT_EXIST = -1,
+        UNKNOW = 0,
         FILE = 1,
         FOLDER = 2,
     };
@@ -257,25 +267,13 @@ public:
     static int FileType(const T* filePath)
     {
         //0 不存在 ，1 文件，-1 目录
-        return 0; 
+        uint32 flags = 0;
+        if (!FileExist<char>(filePath, &flags))
+            return NOT_EXIST;
+
+        return (flags & FILE_ATTRIBUTE_DIRECTORY) == 0 ? FILE : FOLDER;
     }
-
-    template<>
-    static int FileType(const char* filePath)
-    {
-        if (!FileExist<char>(filePath))
-            return 0;
-        return (GetFileAttributesA(filePath) & FILE_ATTRIBUTE_DIRECTORY) == 0 ? FILE : FOLDER;
-    }
-
-    template<>
-    static int FileType(const wchar_t* filePath)
-    {
-        if (!FileExist<wchar_t>(filePath))
-            return 0;
-        return (GetFileAttributesW(filePath) & FILE_ATTRIBUTE_DIRECTORY) == 0 ? FILE : FOLDER;
-	}
-
+    
 
 	template<
 		typename Str

@@ -44,6 +44,8 @@ public:
 
     struct NTVersionInfo                   // for GetWindowsNTVersionEx()
     {
+		NTVersionInfo():version(WIN_UNKNOW){}
+
         bool is64BitSystem;                // 64-bit(true) 32-bit(false)
         bool isWindowsServer;              // Server(true) Workstation(false)
 
@@ -488,6 +490,23 @@ public:
         strcpy(info.osFullName, GetWindowsFullName(info.majorVersion, info.buildNumber, info.isWindowsServer));
 
         return TRUE;
+    }
+
+    static Result Compare(Version ver, Version* selfVersion = nullptr)
+    {
+        static NTVersionInfo info;
+        if (info.version == WIN_UNKNOW)
+        {
+            WinVersion wv;
+            if (!wv.GetWindowsVersion(info))
+                info.version = WIN_UNKNOW;
+        }
+
+        if (selfVersion)
+            *selfVersion = info.version;
+
+        return (info.version < ver) ? -1 :
+            (info.version == ver) ? 0 : 1;
     }
 
 };

@@ -13,6 +13,7 @@
 #include "base/string_convert.h"
 #include "base/path_utils.h"
 
+#include "win32/system_utils.h"
 #include "win32/file_utils.h"
 
 #define MX_PRINT(x) std::cout << x
@@ -105,6 +106,8 @@ bool PowerShellUtils::GetFileInfoImplement(const std::string& file, FileInfo* in
     bool wait_write = false;
     do
     {
+        mxkit::Win64DisableRedirect wdr;
+
         std::string cmd = GetFileInfoCmd(true, file);
         MX_DEBUG(cmd << std::endl);
 
@@ -345,6 +348,8 @@ bool PowerShellUtils::SetAppLockerPolicyImplement(const std::string& file, bool 
 
     if (::GetFileAttributesA(file.c_str()) == -1)
         return false;
+
+    mxkit::Win64DisableRedirect wdr;
 
     std::list<std::string> ls(1, file);
     std::string cmd = SetAppLockerPolicyCmd(true, ls, merge);
