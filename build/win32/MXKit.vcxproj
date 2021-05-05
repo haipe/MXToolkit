@@ -76,6 +76,7 @@
     <ClInclude Include="..\..\mxkit\mxkit.h" />
     <ClInclude Include="..\..\mxkit\sdplog\utils.h" />
     <ClInclude Include="..\..\mxkit\win32\display_utils.h" />
+    <ClInclude Include="..\..\MXKit\win32\env_utils.h" />
     <ClInclude Include="..\..\mxkit\win32\pip_utils.h" />
     <ClInclude Include="..\..\mxkit\win32\dui_window.h" />
     <ClInclude Include="..\..\mxkit\win32\cmd_utils.h" />

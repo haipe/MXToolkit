@@ -49,6 +49,22 @@ public:
     }
 
 
+    template<typename T>
+    static inline std::stringstream ToAStream(const T& v)
+    {
+        std::stringstream ss;
+        ss << v;
+        return ss;
+    }
+
+    template<typename T>
+    static inline std::wstringstream ToWStream(const T& v)
+    {
+        std::wstringstream ss;
+        ss << v;
+        return ss;
+    }
+
     template<
         typename T
         , typename Str
@@ -59,7 +75,7 @@ public:
         static inline Str ToString(const T& value)
     {
         typedef typename Str::allocator_type::value_type CharType;
-        if (std::is_same<CharType, wchar_t>::value && std::is_same<Str, std::string>::value)
+        if (std::is_same<CharType, wchar_t>::value && std::is_same<Str, std::wstring>::value)
         {
             std::wstringstream ss;
             ss << value;
@@ -79,11 +95,11 @@ public:
         = std::string
 #endif
     >
-        static inline Str&& ToString(const RECT& rc)
+        static inline Str ToString(const RECT& rc)
     {
         typedef typename Str::allocator_type::value_type CharType;
         CharType cache[64] = { 0 };
-        if (std::is_same<CharType, wchar_t>::value && std::is_same<Str, std::string>::value)
+        if (std::is_same<CharType, wchar_t>::value && std::is_same<Str, std::wstring>::value)
         {
             _snwprintf(
                 cache,
@@ -100,11 +116,9 @@ public:
                 rc.left, rc.top, rc.right, rc.bottom, rc.right - rc.left, rc.bottom - rc.top);
         }
 
-        Str ret;
-        ret = (CharType)cache;
-
-        return std::move(ret);
+        return Str((CharType)cache);
     }
+
 
     template<
         typename Str
@@ -112,7 +126,7 @@ public:
         = std::string
 #endif
     >
-        static inline Str& ToLower(Str& str)
+        static inline Str ToLower(Str& str)
     {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower); //将大写的都转换成小写
         return str;

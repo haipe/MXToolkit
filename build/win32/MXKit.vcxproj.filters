@@ -281,6 +281,9 @@
     <ClInclude Include="..\..\3rd\zlib\contrib\minizip\zip.h">
       <Filter>3rd\minizip</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\MXKit\win32\env_utils.h">
+      <Filter>mxkit\win32</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\mxkit\mxkit.inc">
